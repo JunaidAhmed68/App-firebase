@@ -1,0 +1,198 @@
+/* General Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f9;
+}
+
+/* Navbar Styling */
+.navbar {
+  background: linear-gradient(to right, #6556f1, #cb93e3);
+}
+.navbar-brand {
+  color: white;
+}
+.navbar-nav .nav-link {
+  color: white;
+}
+.navbar-nav {
+  display: flex;
+  justify-content: flex-start; /* Ensures left-alignment for nav items */
+}
+.navbar-nav.ms-auto {
+  margin-left: auto; /* Pushes the logout button to the right */
+}
+.active{
+  background-color: #4b4b4c;
+  color:white
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: fixed;
+  width: 250px;
+  height: 100vh;
+  background-color: #212529;
+  padding-top: 20px;
+  padding-left: 15px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+.sidebar .nav-link {
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  transition: 0.3s ease-in-out;
+}
+.sidebar .nav-link i {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.sidebar .nav-link:hover {
+  background-color: #343a40;
+  border-radius: 5px;
+}
+
+/* Main Content Area */
+.main-content {
+  flex-grow: 1;
+  margin-left: 250px;
+  padding: 20px;
+}
+
+/* Search Bar & Filter */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-container i {
+  position: absolute;
+  left: 10px;
+  color: #999;
+}
+
+#search-bar {
+  padding: 10px 10px 10px 30px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  width: 200px;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+#search-bar:focus {
+  border-color: #0d6efd;
+}
+#filter-options {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  background-color: white;
+}
+
+/* Logout Button Styling */
+.logout-btn {
+  background-color: #fe0015;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+.logout-btn:hover {
+  background-color: #b23245;
+}
+.logout-btn:active {
+  background-color: #c3737c;
+}
+
+
+/* Responsive Layout for Logout Button */
+@media (max-width: 992px) {
+  .logout-btn {
+    width: 20%;
+  }
+}
+
+/* Card Layout */
+.card-deck .card {
+  margin-bottom: 20px;
+}
+
+/* Style the message modal */
+.msg-modal {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: none;
+  z-index: 9999;
+}
+
+/* Fade-in/out animation for message modal */
+.msg-modal.fade {
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  25% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+}
+
+/* Search button styles */
+.s-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#search-btn {
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+#search-btn:hover {
+  color: #007bff;
+  transform: scale(1.1);
+}
+#search-btn:active {
+  color: #0056b3;
+  transform: scale(0.95);
+}
+
+/* Cancel button styles */
+#cancel {
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+#cancel:hover {
+  color: darkred;
+  transform: scale(1.1);
+}
+#cancel:active {
+  color: black;
+  transform: scale(0.9);
+}
+
+/* .allposts{
+  display: flex;
+  justify-content: center;
+} */
