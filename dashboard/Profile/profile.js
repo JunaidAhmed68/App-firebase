@@ -135,7 +135,12 @@ const myPostDiv = document.getElementById('posts-container'); // reference to th
 
 let getMyPosts = async () => {
   try {
+<<<<<<< HEAD
     const q = query(collection(db, "posts"), where("uid", "==", uid), orderBy("createdAt", "desc"));
+=======
+
+    const q = query(collection(db, "posts"), where("uid", "==", uid),orderBy("createdAt", "desc"));
+>>>>>>> 3b49891 (updated search UI)
     const querySnapshot = await getDocs(q);
 
     document.getElementById('total-posts').textContent = querySnapshot.docs.length; // Update the total posts count
@@ -176,6 +181,25 @@ let getMyPosts = async () => {
         </div>
       `;
 
+<<<<<<< HEAD
+=======
+      // Create edit button
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.classList.add('update-btn', 'btn', 'btn-primary');
+      editBtn.addEventListener("click", () => updatePost(post.id, postData.text));
+
+      // Create delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.classList.add('update-btn', 'btn', 'btn-danger', 'ms-2');
+      deleteBtn.addEventListener("click", () => openDeleteModal(post.id));
+
+      // Append buttons to the card body
+      postCard.querySelector('.card-body').appendChild(editBtn);
+      postCard.querySelector('.card-body').appendChild(deleteBtn);
+
+>>>>>>> 3b49891 (updated search UI)
       // Append the post card to the container
       myPostDiv.appendChild(postCard);
     });
@@ -228,6 +252,7 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", async () =
   await deletePost(currentPostId_del); // Call the delete function with the current task ID
   closeDeleteModal(); // Close the modal after deletion
 });
+<<<<<<< HEAD
 
 
 
@@ -596,3 +621,5 @@ document.querySelector(".delete").addEventListener("click", deleteAccount);
 
 
 
+=======
+>>>>>>> 3b49891 (updated search UI)

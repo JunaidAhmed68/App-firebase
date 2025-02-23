@@ -20,6 +20,10 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b49891 (updated search UI)
 // Function to fetch filtered users
 const searchUsers = async () => {
   try {
@@ -52,6 +56,7 @@ const searchUsers = async () => {
 
     querySnapshot.forEach(async (doc) => {
       let userData = doc.data();
+<<<<<<< HEAD
       let userId = doc.id;
       let buttonText = "Add Friend"; // Default button text
       let buttonClass = "friend-request-btn"; // Default button class
@@ -98,6 +103,18 @@ const searchUsers = async () => {
             ${buttonText}
           </button>
         </div>
+=======
+ // <button class="friend-request-btn" onclick="sendFriendRequest('${currentUserUID}', '${doc.id}')">Add Friend</button>
+      // Create card HTML
+      const cardHTML = `
+      <div class="search-item">
+      <div>
+      <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
+      <span class="username">${userData.displayName}</span>
+      </div>
+      <button class="friend-request-btn">Add Friend</button>
+      </div>
+>>>>>>> 3b49891 (updated search UI)
       `;
 
       // Append card to the card deck
@@ -179,6 +196,7 @@ document.querySelector("#cancel").addEventListener("click", function () {
 
 
 
+<<<<<<< HEAD
 // Function to get all posts in real-time
 const getAllPosts = () => {
   try {
@@ -192,6 +210,15 @@ const getAllPosts = () => {
       
       snapshot.docs.forEach((postDoc) => {
         const postData = postDoc.data();
+=======
+// Function to get all posts
+const getAllPosts = async () => {
+  try {
+    // Order posts by 'createdAt' field in descending order (newest first)
+    const q = query(collection(db, "posts"),orderBy("createdAt", "desc"))
+    const postsSnapshot = await getDocs(q);
+    const allPostDiv = document.getElementById("post-deck");
+>>>>>>> 3b49891 (updated search UI)
 
         // Convert Firestore Timestamp to JS Date
         let createdAt = "Unknown date";
@@ -205,9 +232,17 @@ const getAllPosts = () => {
         const opnID = userData.Id;
         const userProfileImage = userData.userProfileImage;
 
+<<<<<<< HEAD
         // Create a new post card element
         const postCard = document.createElement("div");
         postCard.className = "d-flex justify-content-center my-3";
+=======
+      // Convert Firestore Timestamp to JS Date
+      let createdAt = "Unknown date";
+      if (postData.createdAt?.toDate) {
+        createdAt = postData.createdAt.toDate().toLocaleString(); // Include date and time
+      }
+>>>>>>> 3b49891 (updated search UI)
 
         postCard.innerHTML = `
           <div class="card shadow-sm" style="width: 800px;"> 

@@ -6,10 +6,7 @@ if (uid) {
 // // -----------------------------------------------------------------
 import { auth } from './firebaseConfig.js';
 import {db} from './firebaseConfig.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup ,sendPasswordResetEmail,sendEmailVerification , setDoc , doc} from "../firebaseConfig.js";
-
-
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup , setDoc , doc} from "./firebaseConfig.js";
 
 // --------------------------------------- AddData ---------------------------------------
 
@@ -107,32 +104,9 @@ document.querySelector("#google-signUp").addEventListener("click", async () => {
     localStorage.setItem("uid", user.uid);
     window.location.replace('./dashboard/home/home.html');
   } catch (error) {
-    handleAuthErrors(error);
+    alert(error.message);
   }
 });
-
-
-// --------------------------------------- Reset Password ---------------------------------------
-document.getElementById("resetPasswordBtn").addEventListener("click", async () => {
-  const emailInput = document.getElementById("email");
-  const email = emailInput.value.trim();
-
-  console.log("Email input value:", email); // Debugging log
-
-  if (!email) {
-    showMessage("Please enter your email address.", "error");
-    return;
-  }
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    showMessage("Password reset email sent! Check your inbox.", "success");
-  } catch (error) {
-    handleAuthErrors(error);
-  }
-});
-
-
 
 
 // --------------------------------------- show msg Function ---------------------------------------

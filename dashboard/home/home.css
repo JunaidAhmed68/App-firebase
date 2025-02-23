@@ -262,7 +262,11 @@ body {
 }
 
 .search-item:hover {
+<<<<<<< HEAD
   background:rgb(236, 236, 236);
+=======
+  background: #f9f9f9;
+>>>>>>> 3b49891 (updated search UI)
 }
 
 /* User Info (Image + Name) */
@@ -293,7 +297,11 @@ body {
 }
 
 /* Friend Request Button */
+<<<<<<< HEAD
 .friend-request-btn , .pending-request-btn , .remove-friend-btn {
+=======
+.friend-request-btn {
+>>>>>>> 3b49891 (updated search UI)
   background: #0084ff;
   color: white;
   border: none;
@@ -307,6 +315,7 @@ body {
 .friend-request-btn:hover {
   background: #005bb5;
 }
+<<<<<<< HEAD
 .pending-request-btn{
   background: #f0ad4e;
 }
@@ -321,6 +330,8 @@ body {
 }
 
 
+=======
+>>>>>>> 3b49891 (updated search UI)
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
@@ -342,6 +353,7 @@ body {
     padding: 5px 10px;
   }
 }
+<<<<<<< HEAD
 .modal {
   display: none; /* Initially hidden */
   position: fixed;
@@ -379,3 +391,5 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
+=======
+>>>>>>> 3b49891 (updated search UI)
