@@ -6,7 +6,8 @@ if (uid) {
 // // -----------------------------------------------------------------
 import { auth } from './firebaseConfig.js';
 import {db} from './firebaseConfig.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup , setDoc , doc} from "./firebaseConfig.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup ,sendPasswordResetEmail, setDoc , doc} from "../firebaseConfig.js";
+
 
 // --------------------------------------- AddData ---------------------------------------
 
@@ -98,6 +99,53 @@ document.querySelector("#google-signUp").addEventListener("click", async () => {
     alert(error.message);
   }
 });
+
+
+// --------------------------------------- Reset Password ---------------------------------------
+document.getElementById("resetPasswordBtn").addEventListener("click", async () => {
+  const emailInput = document.getElementById("email");
+  const email = emailInput.value.trim();
+
+  console.log("Email input value:", email); // Debugging log
+
+  if (!email) {
+    showMessage("Please enter your email address.", "error");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showMessage("Password reset email sent! Check your inbox.", "success");
+  } catch (error) {
+    console.error("Error:", error); // Log the entire error object for more context
+
+    let errorMessage = "Something went wrong. Please try again.";
+    switch (error.code) {
+      case "auth/invalid-email":
+        errorMessage = "Invalid email format. Please enter a valid email.";
+        break;
+      case "auth/user-not-found":
+        errorMessage = "No account found with this email. Please check and try again.";
+        break;
+      case "auth/too-many-requests":
+        errorMessage = "Too many requests! Please try again later.";
+        break;
+      case "auth/network-request-failed":
+        errorMessage = "Network error. Please check your internet connection.";
+        break;
+      case "auth/internal-error":
+        errorMessage = "An unexpected error occurred. Please try again later.";
+        break;
+      default:
+        errorMessage = "An unknown error occurred. Please try again.";
+        break;
+    }
+
+    showMessage(errorMessage, "error");
+  }
+});
+
+
 
 
 // --------------------------------------- show msg Function ---------------------------------------

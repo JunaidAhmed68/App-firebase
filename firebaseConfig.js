@@ -1,8 +1,9 @@
 // Import Firebase services
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup,sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc ,query, where, collection , getDocs ,addDoc,deleteDoc,orderBy,updateDoc,serverTimestamp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
 
 // Your Firebase Config
 const firebaseConfig = {
@@ -44,7 +45,6 @@ function showMessage(message) {
 
 
 
-
 export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -59,6 +59,7 @@ export {
   setDoc,
   getDoc,
   addDoc,
+  sendPasswordResetEmail,
   collection,
   getFirestore,
   auth,

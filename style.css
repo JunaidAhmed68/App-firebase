@@ -189,7 +189,7 @@ input.form-control:active {
   top: 10px;  /* Adjust this to control where on the page the modal appears */
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4CAF50;  /* Green background for success messages */
+  background-color: #1877f2;  /* blue background for success messages */
   color: white;
   padding: 10px 20px;
   border-radius: 5px;

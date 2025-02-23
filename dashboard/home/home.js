@@ -21,14 +21,6 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
 
 
 
-
-
-
-
-
-
-
-
 // Function to fetch filtered users
 const searchUsers = async () => {
   try {
@@ -59,22 +51,16 @@ const searchUsers = async () => {
 
     querySnapshot.forEach((doc) => {
       let userData = doc.data();
-
+ // <button class="friend-request-btn" onclick="sendFriendRequest('${currentUserUID}', '${doc.id}')">Add Friend</button>
       // Create card HTML
       const cardHTML = `
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body text-center">
-              <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" 
-                   alt="User Image" class="rounded-circle" style="width: 80px; height: 80px;">
-              <h5 class="card-title mt-2">${userData.displayName}</h5>
-              <p class="card-text"><strong>Email:</strong> ${userData.email}</p>
-              <p class="card-text"><strong>Phone:</strong> ${userData.phoneNumber}</p>
-              <p class="card-text"><strong>User ID:</strong> ${doc.id}</p>
-              <p class="card-text"><strong>Joined:</strong> ${userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString() : "N/A"}</p>
-            </div>
-          </div>
-        </div>
+      <div class="search-item">
+      <div>
+      <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
+      <span class="username">${userData.displayName}</span>
+      </div>
+      <button class="friend-request-btn">Add Friend</button>
+      </div>
       `;
 
       // Append card to the card deck
@@ -127,11 +113,15 @@ document.querySelector("#cancel").addEventListener("click", function () {
   };
 };
 
+
+
+
 // Function to get all posts
 const getAllPosts = async () => {
   try {
     // Order posts by 'createdAt' field in descending order (newest first)
-    const postsSnapshot = await getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc")));
+    const q = query(collection(db, "posts"),orderBy("createdAt", "desc"))
+    const postsSnapshot = await getDocs(q);
     const allPostDiv = document.getElementById("post-deck");
 
     // Clear existing posts
@@ -143,7 +133,7 @@ const getAllPosts = async () => {
       // Convert Firestore Timestamp to JS Date
       let createdAt = "Unknown date";
       if (postData.createdAt?.toDate) {
-        createdAt = postData.createdAt.toDate().toLocaleDateString();
+        createdAt = postData.createdAt.toDate().toLocaleString(); // Include date and time
       }
 
       // **Get user data from cache**

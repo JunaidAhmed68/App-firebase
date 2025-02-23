@@ -158,6 +158,12 @@ body {
 }
 
 /* Search button styles */
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 .s-list {
   display: flex;
   justify-content: space-between;
@@ -192,7 +198,132 @@ body {
   transform: scale(0.9);
 }
 
-/* .allposts{
+.allposts{
   display: flex;
   justify-content: center;
-} */
+}
+
+
+
+/* Bottom Navigation for Mobile View */
+@media (max-width: 780px) {
+  .sidebar {
+    display: none; /* Hide sidebar on small screens */
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 5px;
+  }
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .bottom-nav a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bottom-nav a i {
+    font-size: 24px;
+  }
+}
+
+
+
+
+
+
+/* Search Item Container */
+.search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.search-item:hover {
+  background: #f9f9f9;
+}
+
+/* User Info (Image + Name) */
+.search-item div {
+  display: flex;
+  align-items: center;
+}
+
+.search-item img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid #ddd;
+  transition: 0.3s ease;
+}
+
+.search-item:hover img {
+  border-color: #0084ff;
+}
+
+/* Username */
+.username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Friend Request Button */
+.friend-request-btn {
+  background: #0084ff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.friend-request-btn:hover {
+  background: #005bb5;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+  .search-item {
+    padding: 10px;
+  }
+
+  .search-item img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .username {
+    font-size: 14px;
+  }
+
+  .friend-request-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}

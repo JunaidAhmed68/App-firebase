@@ -116,7 +116,7 @@ const updatePost = async (postId, currentText) => {
       const postRef = doc(db, "posts", postId);
       await updateDoc(postRef, {
         text: newPostText, // New post text
-        updatedAt: serverTimestamp() // Optionally track when the post was updated
+        createdAt: serverTimestamp() // Optionally track when the post was updated
       });
 
       // Close modal and remove blur from background
@@ -148,7 +148,8 @@ const myPostDiv = document.getElementById('posts-container'); // reference to th
 
 let getMyPosts = async () => {
   try {
-    const q = query(collection(db, "posts"), where("uid", "==", uid));
+
+    const q = query(collection(db, "posts"), where("uid", "==", uid),orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     
     document.getElementById('total-posts').textContent = querySnapshot.docs.length; // Update the total posts count
@@ -163,7 +164,7 @@ let getMyPosts = async () => {
       // Convert Firestore Timestamp to JS Date
       let createdAt = "Unknown date";
       if (postData.createdAt?.toDate) {
-        createdAt = postData.createdAt.toDate().toLocaleDateString();
+        createdAt = postData.createdAt.toDate().toLocaleString();
       }
 
       // Create the card div
@@ -189,7 +190,7 @@ let getMyPosts = async () => {
       const deleteBtn = document.createElement('button');
       deleteBtn.textContent = 'Delete';
       deleteBtn.classList.add('update-btn', 'btn', 'btn-danger', 'ms-2');
-      deleteBtn.addEventListener("click", () => deletePost(post.id));
+      deleteBtn.addEventListener("click", () => openDeleteModal(post.id));
 
       // Append buttons to the card body
       postCard.querySelector('.card-body').appendChild(editBtn);
@@ -207,3 +208,24 @@ let getMyPosts = async () => {
 // Call the function to load the posts for the current user
 getMyPosts();
 
+
+
+let currentPostId_del=''; // Variable to store the current post ID
+// Function to open the delete confirmation modal
+const openDeleteModal = (postId) => {
+  currentPostId_del = postId; // Store the
+  document.getElementById("deleteModal").style.display = "block"; // Show the modal
+  document.querySelector("#closeDeleteModal").addEventListener("click", closeDeleteModal); // Close the modal if close button is clicked
+  document.querySelector("#cancelDeleteBtn").addEventListener("click", closeDeleteModal); // Close the modal if close button is clicked
+};
+
+// Function to close the delete confirmation modal
+const closeDeleteModal = () => {
+    document.getElementById("deleteModal").style.display = "none"; // Hide the modal
+  };
+    
+// Event listener for the delete button
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  await deletePost(currentPostId_del); // Call the delete function with the current task ID
+  closeDeleteModal(); // Close the modal after deletion
+});
