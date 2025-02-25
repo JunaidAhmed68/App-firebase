@@ -261,7 +261,7 @@ body {
 }
 
 .search-item:hover {
-  background: #f9f9f9;
+  background:rgb(192, 187, 187);
 }
 
 /* User Info (Image + Name) */

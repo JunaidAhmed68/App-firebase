@@ -6,7 +6,9 @@ if (uid) {
 // // -----------------------------------------------------------------
 import { auth } from './firebaseConfig.js';
 import {db} from './firebaseConfig.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup ,sendPasswordResetEmail, setDoc , doc} from "../firebaseConfig.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup ,sendPasswordResetEmail,sendEmailVerification , setDoc , doc} from "../firebaseConfig.js";
+
+
 
 
 // --------------------------------------- AddData ---------------------------------------
@@ -37,19 +39,22 @@ document.querySelector("#signup-btn").addEventListener("click", async (e) => {
   const password = document.getElementById("password").value;
   const fullName = document.getElementById("fullName").value;
   const phoneNumber = document.getElementById("phoneNumber").value;
-  
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Send verification email
+    await sendEmailVerification(user);
+    showMessage("Verification email sent! Please check your inbox.");
+
     // Add user data to Firestore
-    localStorage.setItem("uid", user.uid);
-    await addUserData(user, fullName, phoneNumber).then(() => {
-      window.location.replace('./dashboard/home/home.html');
-    });
+    await addUserData(user, fullName, phoneNumber);
+    
+    // Optionally, you can redirect to a "check your email" page
+    window.location.replace('./check-email/check_email.html'); // Change to your desired path
   } catch (error) {
-    alert(error.message);
+    handleAuthErrors(error);
   }
 });
 
@@ -66,13 +71,19 @@ document.querySelector("#login-btn").addEventListener("click", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Check if the user's email is verified
+    if (!user.emailVerified) {
+      showMessage("Please verify your email before logging in.");
+      return; // Stop execution if email is not verified
+    }
+
     // Add user data to Firestore
     await addUserData(user);
 
     localStorage.setItem("uid", user.uid);
     window.location.replace('./dashboard/home/home.html');
-    } catch (error) {
-    alert(error.message);
+  } catch (error) {
+    handleAuthErrors(error);
   }
 });
 
@@ -96,7 +107,7 @@ document.querySelector("#google-signUp").addEventListener("click", async () => {
     localStorage.setItem("uid", user.uid);
     window.location.replace('./dashboard/home/home.html');
   } catch (error) {
-    alert(error.message);
+    handleAuthErrors(error);
   }
 });
 
@@ -117,31 +128,7 @@ document.getElementById("resetPasswordBtn").addEventListener("click", async () =
     await sendPasswordResetEmail(auth, email);
     showMessage("Password reset email sent! Check your inbox.", "success");
   } catch (error) {
-    console.error("Error:", error); // Log the entire error object for more context
-
-    let errorMessage = "Something went wrong. Please try again.";
-    switch (error.code) {
-      case "auth/invalid-email":
-        errorMessage = "Invalid email format. Please enter a valid email.";
-        break;
-      case "auth/user-not-found":
-        errorMessage = "No account found with this email. Please check and try again.";
-        break;
-      case "auth/too-many-requests":
-        errorMessage = "Too many requests! Please try again later.";
-        break;
-      case "auth/network-request-failed":
-        errorMessage = "Network error. Please check your internet connection.";
-        break;
-      case "auth/internal-error":
-        errorMessage = "An unexpected error occurred. Please try again later.";
-        break;
-      default:
-        errorMessage = "An unknown error occurred. Please try again.";
-        break;
-    }
-
-    showMessage(errorMessage, "error");
+    handleAuthErrors(error);
   }
 });
 
@@ -165,3 +152,89 @@ export function showMessage(message) {
     msgModal.classList.remove("fade");  // Remove animation class for next use
   }, 3000);  // Hide after 3 seconds
 }
+
+
+
+// -------------------------------------- error handlor -----------------------------------------
+const handleAuthErrors = (error) => {
+  console.error("Auth Error:", error); // Log error for debugging
+
+  let message = "Something went wrong. Please try again.";
+
+  switch (error.code) {
+    case "auth/invalid-credential":
+      message = "Invalid email or password. Please try again.";
+      break;
+    case "auth/user-disabled":
+      message = "This account has been disabled. Contact support.";
+      break;
+    case "auth/user-not-found":
+      message = "No account found with this email.";
+      break;
+    case "auth/wrong-password":
+      message = "Incorrect password. Please try again.";
+      break;
+    case "auth/too-many-requests":
+      message = "Too many failed attempts. Try again later.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/email-already-in-use":
+      message = "This email is already registered. Try logging in.";
+      break;
+    case "auth/invalid-email":
+      message = "Invalid email format. Please enter a valid email.";
+      break;
+    case "auth/weak-password":
+      message = "Password should be at least 6 characters.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/popup-closed-by-user":
+      message = "Google sign-in popup closed. Try again.";
+      break;
+    case "auth/cancelled-popup-request":
+      message = "Multiple popups detected. Close extra popups and try again.";
+      break;
+    case "auth/account-exists-with-different-credential":
+      message = "An account already exists with this email using a different sign-in method.";
+      break;
+    case "auth/credential-already-in-use":
+      message = "This Google account is already linked to another account.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/invalid-email":
+      message = "Invalid email format. Please enter a valid email.";
+      break;
+    case "auth/user-not-found":
+      message = "No account found with this email. Please check and try again.";
+      break;
+    case "auth/too-many-requests":
+      message = "Too many requests! Please try again later.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Please check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break
+    default:
+      message = error.message || "An unknown error occurred. Please try again.";
+      break;
+  }
+
+  showMessage(message);
+};

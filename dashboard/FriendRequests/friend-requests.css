@@ -94,3 +94,79 @@ body {
   75% { opacity: 1; transform: translateX(-50%) translateY(0); }
   100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* Friend Requests Section */
+#friend-requests-section {
+  margin: 20px;
+  padding: 15px;
+  background-color: #f9f9f9; /* Light background for contrast */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+#friend-requests-section h3 {
+  margin-bottom: 15px;
+  color: #333; /* Darker text for the header */
+}
+
+#friend-requests-list {
+  max-height: 300px; /* Limit height for scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.friend-request-item {
+  display: flex; /* Flexbox for alignment */
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Center items vertically */
+  padding: 10px; /* Padding for each request item */
+  border-bottom: 1px solid #ddd; /* Divider line */
+}
+
+.friend-request-item:last-child {
+  border-bottom: none; /* Remove border for the last item */
+}
+
+.friend-request-item img {
+  width: 40px; /* Fixed size for user images */
+  height: 40px; /* Fixed size for user images */
+  border-radius: 50%; /* Circular images */
+  margin-right: 10px; /* Space between image and text */
+}
+
+.friend-request-item span {
+  flex-grow: 1; /* Allow text to take available space */
+  color: #555; /* Slightly lighter text color */
+}
+
+.accept-btn, .reject-btn {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 5px 10px; /* Padding for buttons */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+.accept-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.reject-btn {
+  background-color: #dc3545; /* Bootstrap danger color */
+  margin-left: 10px; /* Space between buttons */
+}
+
+.reject-btn:hover {
+  background-color: #c82333; /* Darker red on hover */
+}

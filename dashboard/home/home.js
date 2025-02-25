@@ -7,7 +7,7 @@ if (!uid) {
 // showMessage("Welcome to the Dashboard!");
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,getDoc,doc, getDocs , query,where ,orderBy, showMessage} from "../../firebaseConfig.js";
+import { auth, signOut , db , collection ,getDoc,doc, getDocs , query,where ,orderBy, showMessage,setDoc} from "../../firebaseConfig.js";
 document.querySelector("#logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -19,7 +19,34 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
 });
 
 
+// Function to send a friend request
+window.sendFriendRequest = async function(receiverId) {
+  const senderId = localStorage.getItem('uid'); // Get the current user's ID
 
+  if (!senderId) {
+      alert("You need to be logged in to send friend requests.");
+      return;
+  }
+
+  try {
+      // Create a unique ID for the friend request
+      const requestId = `${senderId}_${receiverId}_${Date.now()}`; // Unique ID based sender, receiver, and timestamp
+
+      // Add a new friend request document
+        // Set the friend request document
+        await setDoc(doc(db, "friendRequests", requestId), {
+          senderId: senderId,
+          receiverId: receiverId,
+          status: 'pending', // Status can be 'pending', 'accepted', or 'rejected'
+          createdAt: new Date() // Timestamp for when the request was sent
+      });
+
+      showMessage("Friend request sent successfully!");
+  } catch (error) {
+      console.error("Error sending friend request: ", error);
+      showMessage("Error sending friend request. Please try again.");
+  }
+};
 
 // Function to fetch filtered users
 const searchUsers = async () => {
@@ -59,7 +86,7 @@ const searchUsers = async () => {
       <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
       <span class="username">${userData.displayName}</span>
       </div>
-      <button class="friend-request-btn">Add Friend</button>
+      <button class="friend-request-btn" onclick="sendFriendRequest('${doc.id}')">Add Friend</button>
       </div>
       `;
 
@@ -70,6 +97,7 @@ const searchUsers = async () => {
     console.error("Error fetching users:", error);
   }
 };
+
 
 // Event listener for the search button
 document.getElementById("search-btn").addEventListener("click", searchUsers);
