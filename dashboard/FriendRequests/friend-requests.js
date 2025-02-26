@@ -112,8 +112,10 @@ async function fetchFriendRequests() {
                         style="width: 40px; height: 40px; border-radius: 50%;">
                     <span>${senderData.displayName}</span>
                 </div>
+                <div>
                 <button class="accept-btn" onclick="acceptFriendRequest('${id}', '${senderId}')">Accept</button>
-                <button class="reject-btn" onclick="rejectFriendRequest('${id}')">Reject</button>
+                <button class="reject-btn" onclick="rejectFriendRequest('${id}')">X</button>
+                </div>
             `;
             friendRequestsList.appendChild(requestItem);
         });

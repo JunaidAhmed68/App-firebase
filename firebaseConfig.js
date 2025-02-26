@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup,sendPasswordResetEmail ,sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc ,query, where, collection , getDocs ,addDoc,orderBy,updateDoc,serverTimestamp , arrayUnion, writeBatch, deleteDoc} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc ,query, where, collection , getDocs ,addDoc,orderBy,updateDoc,serverTimestamp , arrayUnion, writeBatch, deleteDoc,arrayRemove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
 // Your Firebase Config
 const firebaseConfig = {
@@ -64,6 +64,7 @@ export {
   sendEmailVerification ,
   collection,
   getFirestore,
+  arrayRemove,
   auth,
   db,
   orderBy,

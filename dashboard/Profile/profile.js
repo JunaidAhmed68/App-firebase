@@ -6,7 +6,7 @@ if (!uid) {
 
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,  serverTimestamp,showMessage, 
+import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, 
 } from "../../firebaseConfig.js";
 
 document.querySelector("#logout-btn").addEventListener("click", async () => {
@@ -49,20 +49,7 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
   };
 };
 
-// Function to populate profile information
-const infoProfile = () => {
-  // Get user data from cache
-  const userData = getUserDataFromObj(uid); // Fixed function name
 
-  // Update the profile information in the HTML
-  document.getElementById('profile-name').textContent = userData.displayName;
-  document.getElementById('profile-email').textContent = userData.email;
-  document.getElementById('profile-friends').textContent = `Friends: ${userData.friendsCount || 0}`;
-
-  // Update the profile picture
-  const profilePicture = document.querySelector('#Profile_Picture');
-  profilePicture.src = userData.userProfileImage;
-};
 
 
 // Function to delete the post
@@ -229,3 +216,55 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", async () =
   await deletePost(currentPostId_del); // Call the delete function with the current task ID
   closeDeleteModal(); // Close the modal after deletion
 });
+
+
+
+
+
+
+
+
+
+
+
+async function getFriendsCount() {
+    const userId = localStorage.getItem('uid'); // Get current user ID
+    if (!userId) return;
+
+    try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            const friendsCount = userData.friends ? userData.friends.length : 0;
+            console.log(`Total Friends: ${friendsCount}`);
+
+            document.getElementById('profile-friends').textContent = `Friends: ${friendsCount
+               || 0}`;
+        } else {
+            console.log("User not found");
+            return 0;
+        }
+    } catch (error) {
+        console.error("Error fetching friends count: ", error);
+        return 0;
+    }
+}
+
+
+getFriendsCount();
+
+// Function to populate profile information
+const infoProfile = () => {
+  // Get user data from cache
+  const userData = getUserDataFromObj(uid); // Fixed function name
+
+  // Update the profile information in the HTML
+  document.getElementById('profile-name').textContent = userData.displayName;
+  document.getElementById('profile-email').textContent = userData.email;
+
+  // Update the profile picture
+  const profilePicture = document.querySelector('#Profile_Picture');
+  profilePicture.src = userData.userProfileImage;
+};

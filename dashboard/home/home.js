@@ -7,7 +7,7 @@ if (!uid) {
 // showMessage("Welcome to the Dashboard!");
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,getDoc,doc, getDocs , query,where ,orderBy, showMessage,setDoc} from "../../firebaseConfig.js";
+import { auth, signOut , db , collection ,getDoc, getDocs , query,where ,orderBy, showMessage,setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "../../firebaseConfig.js";
 document.querySelector("#logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -17,6 +17,7 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
     alert(error.message);
   }
 });
+
 
 
 // Function to send a friend request
@@ -42,11 +43,79 @@ window.sendFriendRequest = async function(receiverId) {
       });
 
       showMessage("Friend request sent successfully!");
-  } catch (error) {
+      searchUsers(); // Refresh the search results
+    } catch (error) {
       console.error("Error sending friend request: ", error);
       showMessage("Error sending friend request. Please try again.");
+    }
+  };
+
+  // ---------------------- remove friend -----------------------------------------
+   window.removeFriend = async function (friendId) {
+    const currentUserUID = localStorage.getItem("uid");
+    closeRemoveFriendModal(); // Close the modal after deletion
+    if (!currentUserUID) return;
+    
+    try {
+      const userRef = doc(db, "users", currentUserUID);
+      const friendRef = doc(db, "users", friendId);
+  
+      await updateDoc(userRef, {
+        friends: arrayRemove(friendId)
+      });
+  
+      await updateDoc(friendRef, {
+        friends: arrayRemove(currentUserUID)
+      });
+  
+      showMessage("Friend removed successfully.");
+      searchUsers(); // Refresh the search results
+    } catch (error) {
+      console.error("Error removing friend:", error);
+    }
   }
+let currentRemoveId_del=''; // Variable to store the current post ID
+// Function to open the delete confirmation modal
+ window.openRemoveFriendModal = (receiverId) => {
+  currentRemoveId_del = receiverId; // Store the
+  document.getElementById("removeFriendModal").style.display = "block"; // Show the modal
+  document.querySelector("#closeRemoveFriendModal").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
+  document.querySelector("#cancelRemoveFriendBtn").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
 };
+
+// Function to close the delete confirmation modal
+const closeRemoveFriendModal = () => {
+    document.querySelector("#removeFriendModal").style.display = "none"; // Hide the modal
+  };
+    
+// Event listener for the delete button
+document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
+  await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Function to fetch filtered users
 const searchUsers = async () => {
@@ -60,12 +129,14 @@ const searchUsers = async () => {
     cardDeck.innerHTML = "";
 
     if (searchValue === "") {
-      console.log("Enter a search value");
+      showMessage("Enter a search value");
       return;
     }
+    
     document.querySelector("#cancel").style.display = "block"; // Show cancel button
     document.querySelector("#search-ppls").style.display = "block"; 
 
+    const currentUserUID = localStorage.getItem("uid"); // Get current user's UID
     const usersCollection = collection(db, "users");
     const q = query(usersCollection, where(filterType, "==", searchValue));
     const querySnapshot = await getDocs(q);
@@ -76,18 +147,55 @@ const searchUsers = async () => {
       return;
     }
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(async (doc) => {
       let userData = doc.data();
- // <button class="friend-request-btn" onclick="sendFriendRequest('${currentUserUID}', '${doc.id}')">Add Friend</button>
+      let userId = doc.id;
+      let buttonText = "Add Friend"; // Default button text
+      let buttonClass = "friend-request-btn"; // Default button class
+      let buttonDisabled = false;
+
+      if (userId === currentUserUID) {
+        return; // Skip showing the current user
+      }
+
+      // Check if the user is already a friend
+      // const userRef = doc(db, "users", currentUserUID);
+      const userSnapshot = await getDocs(query(collection(db, "users"), where("uid", "==", currentUserUID)));
+
+      if (!userSnapshot.empty) {
+        const currentUserData = userSnapshot.docs[0].data();
+        if (currentUserData.friends && currentUserData.friends.includes(userId)) {
+          buttonText = "Remove Friend";
+          buttonClass = "remove-friend-btn";
+        }
+      }
+
+      // Check if a friend request is pending
+      const requestQuery = query(
+        collection(db, "friendRequests"),
+        where("senderId", "==", currentUserUID),
+        where("receiverId", "==", userId),
+        where("status", "==", "pending")
+      );
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (!requestSnapshot.empty) {
+        buttonText = "Pending";
+        buttonClass = "pending-request-btn";
+        buttonDisabled = true;
+      }
+
       // Create card HTML
       const cardHTML = `
-      <div class="search-item">
-      <div>
-      <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
-      <span class="username">${userData.displayName}</span>
-      </div>
-      <button class="friend-request-btn" onclick="sendFriendRequest('${doc.id}')">Add Friend</button>
-      </div>
+        <div class="search-item">
+          <div>
+            <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
+            <span class="username">${userData.displayName}</span>
+          </div>
+          <button class="${buttonClass}" ${buttonDisabled ? "disabled" : ""} onclick="${buttonText === 'Remove Friend' ? `openRemoveFriendModal('${userId}')` : `sendFriendRequest('${userId}')`}">
+            ${buttonText}
+          </button>
+        </div>
       `;
 
       // Append card to the card deck
@@ -97,6 +205,7 @@ const searchUsers = async () => {
     console.error("Error fetching users:", error);
   }
 };
+
 
 
 // Event listener for the search button
