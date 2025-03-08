@@ -814,3 +814,355 @@ textarea {
   font-size: 22px;
   cursor: pointer;
 }
+
+
+
+
+
+
+.chat-container {
+  display: flex;
+  height: 100vh;
+}
+
+.left-panel {
+  width: 30%;
+  background: #f5f5f5;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.right-panel {
+  flex-grow: 1;
+  background: white;
+  display: flex;
+  width: 100%; 
+  justify-content: center;
+  align-items: center;
+
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.friend-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.default-chat-screen {
+  text-align: center;
+}
+img.profile-pic {
+  object-fit: cover; /* Crop to fit the box */
+  border-radius: 50%; /* Make it circular */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Friends List Container */
+.friends-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  max-width: 350px;
+}
+
+/* Friend Item */
+.friend-item {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+}
+
+.friend-item:hover {
+  transform: translateY(-2px);
+  background: #e9ecef;
+}
+
+/* Smaller Profile Picture */
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+img.profile-pic
+/* Friend Info */
+.friend-info {
+  flex-grow: 1;
+}
+
+.friend-info h4 {
+  font-size: 14px;
+  margin: 0;
+  color: #333;
+}
+
+/* Message Button */
+.message-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.message-btn:hover {
+  background: #0056b3;
+}
+
+.message-btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .friend-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .profile-pic {
+    margin-bottom: 6px;
+  }
+
+  .friend-info h4 {
+    font-size: 13px;
+  }
+
+  .message-btn {
+    width: 100%;
+  }
+}
+
+.chat-header{
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Ensure the chat container takes only the available space */
+#chatContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Makes it responsive within its parent */
+  width: 100%; /* Covers only its parent div */
+  height: 100%; /* Ensures it does not overflow */
+  max-height: 800px; /* Prevents it from taking too much space */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  overflow: hidden;
+  max-height: 500px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  #chatContainer {
+    width: 90%; /* Reduce width for tablets */
+    max-height: 600px; /* Adjust height */
+  }
+}
+
+@media (max-width: 768px) {
+  #chatContainer {
+    width: 100%;
+    height: 100vh; /* Full height on mobile */
+    border-radius: 0; /* Remove rounded corners for fullscreen look */
+  }
+}
+
+
+/* Chat Header */
+.chat-header {
+  display: flex;
+  align-items: center;
+  background-color: #075E54;
+  color: white;
+  padding: 12px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+}
+
+.chat-header .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.chat-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+/* Chat Messages */
+.chat-messages {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #ECE5DD;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+/* Individual Message */
+.message {
+  max-width: 75%;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.message.sent {
+  align-self: flex-end;
+  background-color: #DCF8C6;
+}
+
+.message.received {
+  align-self: flex-start;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+/* Chat Input */
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+
+.chat-input button {
+  padding: 8px 14px;
+  margin-left: 8px;
+  border: none;
+  background-color: #25D366;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.chat-input button:hover {
+  background-color: #1EBE5D;
+}
+
+/* Scrollbar Customization */
+.chat-messages::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  #chatContainer {
+    right: 10px;
+    left: 10px;
+    width: auto;
+    height: 90vh;
+  }
+
+  .chat-header h3 {
+    font-size: 14px;
+  }
+
+  .chat-input input {
+    font-size: 13px;
+  }
+}

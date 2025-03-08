@@ -1,8 +1,8 @@
 // Import Firebase services
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup,sendPasswordResetEmail ,sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc ,query, where, collection , getDocs ,addDoc,orderBy,updateDoc,serverTimestamp , arrayUnion, writeBatch, deleteDoc,arrayRemove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup,sendPasswordResetEmail ,sendEmailVerification ,deleteUser,EmailAuthProvider,reauthenticateWithCredential ,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc ,query, where, collection , getDocs ,addDoc,orderBy,updateDoc,serverTimestamp , arrayUnion, writeBatch, deleteDoc,arrayRemove,increment ,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
 // Your Firebase Config
 const firebaseConfig = {
@@ -46,6 +46,7 @@ function showMessage(message) {
 
 export {
   createUserWithEmailAndPassword,
+  deleteUser ,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
    arrayUnion,
@@ -62,13 +63,20 @@ export {
   addDoc,
   sendPasswordResetEmail,
   sendEmailVerification ,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
   collection,
   getFirestore,
   arrayRemove,
   auth,
   db,
+  getAuth,
   orderBy,
   deleteDoc,
   updateDoc,
-  serverTimestamp
+  serverTimestamp,
+  onAuthStateChanged,
+  increment,
+  limit,
+  onSnapshot
 };

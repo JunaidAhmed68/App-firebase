@@ -48,7 +48,6 @@ body {
 /* Main Content Area */
 .main-content {
   flex-grow: 1;
-  margin-left: 250px; /* Adjust based on sidebar width */
   padding: 20px;
 }
 
@@ -190,7 +189,6 @@ body {
 
 /* Main Content (Adjusts Based on Sidebar Visibility) */
 .main-content {
-  margin-left: 250px;
   transition: margin-left 0.3s ease-in-out;
 }
 
@@ -500,7 +498,7 @@ h4, h5 {
   background-color:#fff;
   color:black;
 }
-#edt-pro-btn{
+#send-req-btn{
   background-color: #005bb5;
   color: white;
   padding: 12px 10px;

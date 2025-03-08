@@ -20,6 +20,9 @@ navLinks.forEach((link) => {
         case "friend-requests":
           window.location.href = "../FriendRequests/friend-requests.html"; // Adjust the path as necessary
           break;
+        case "chat":
+          window.location.href = "../Chat/chat.html"; // Adjust the path as necessary
+          break;
         case "profile":
           window.location.href = "../Profile/profile.html"; // Adjust the path as necessary
           break;
@@ -38,3 +41,4 @@ navLinks.forEach((link) => {
     this.classList.add("active");
   });
 });
+
