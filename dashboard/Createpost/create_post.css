@@ -159,3 +159,27 @@ textarea {
       padding: 8px; /* Smaller button padding */
   }
 }
+
+
+@media (max-width: 600px) {
+  .friend-request-text {
+      font-size: 12px; /* Smaller font for small screens */
+  }
+  /* Friend Requests Section */
+#friend-requests-section {
+  padding: 5px;
+}
+.friend-request-item {
+  flex-direction: column;
+  padding: 0px;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 0px; 
+  padding: 10px;
+}
+}

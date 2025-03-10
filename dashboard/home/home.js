@@ -7,7 +7,7 @@ if (!uid) {
 // showMessage("Welcome to the Dashboard!");
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,getDoc, getDocs , query,where ,orderBy, showMessage,setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "../../firebaseConfig.js";
+import { auth, signOut , db , collection ,getDoc, getDocs , query,where ,orderBy, showMessage,setDoc, doc, updateDoc, arrayUnion, arrayRemove ,onSnapshot} from "../../firebaseConfig.js";
 document.querySelector("#logout-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -17,103 +17,6 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
     alert(error.message);
   }
 });
-
-
-
-// Function to send a friend request
-window.sendFriendRequest = async function(receiverId) {
-  const senderId = localStorage.getItem('uid'); // Get the current user's ID
-
-  if (!senderId) {
-      alert("You need to be logged in to send friend requests.");
-      return;
-  }
-
-  try {
-      // Create a unique ID for the friend request
-      const requestId = `${senderId}_${receiverId}_${Date.now()}`; // Unique ID based sender, receiver, and timestamp
-
-      // Add a new friend request document
-        // Set the friend request document
-        await setDoc(doc(db, "friendRequests", requestId), {
-          senderId: senderId,
-          receiverId: receiverId,
-          status: 'pending', // Status can be 'pending', 'accepted', or 'rejected'
-          createdAt: new Date() // Timestamp for when the request was sent
-      });
-
-      showMessage("Friend request sent successfully!");
-      searchUsers(); // Refresh the search results
-    } catch (error) {
-      console.error("Error sending friend request: ", error);
-      showMessage("Error sending friend request. Please try again.");
-    }
-  };
-
-  // ---------------------- remove friend -----------------------------------------
-   window.removeFriend = async function (friendId) {
-    const currentUserUID = localStorage.getItem("uid");
-    closeRemoveFriendModal(); // Close the modal after deletion
-    if (!currentUserUID) return;
-    
-    try {
-      const userRef = doc(db, "users", currentUserUID);
-      const friendRef = doc(db, "users", friendId);
-  
-      await updateDoc(userRef, {
-        friends: arrayRemove(friendId)
-      });
-  
-      await updateDoc(friendRef, {
-        friends: arrayRemove(currentUserUID)
-      });
-  
-      showMessage("Friend removed successfully.");
-      searchUsers(); // Refresh the search results
-    } catch (error) {
-      console.error("Error removing friend:", error);
-    }
-  }
-let currentRemoveId_del=''; // Variable to store the current post ID
-// Function to open the delete confirmation modal
- window.openRemoveFriendModal = (receiverId) => {
-  currentRemoveId_del = receiverId; // Store the
-  document.getElementById("removeFriendModal").style.display = "block"; // Show the modal
-  document.querySelector("#closeRemoveFriendModal").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
-  document.querySelector("#cancelRemoveFriendBtn").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
-};
-
-// Function to close the delete confirmation modal
-const closeRemoveFriendModal = () => {
-    document.querySelector("#removeFriendModal").style.display = "none"; // Hide the modal
-  };
-    
-// Event listener for the delete button
-document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
-  await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -159,7 +62,6 @@ const searchUsers = async () => {
       }
 
       // Check if the user is already a friend
-      // const userRef = doc(db, "users", currentUserUID);
       const userSnapshot = await getDocs(query(collection(db, "users"), where("uid", "==", currentUserUID)));
 
       if (!userSnapshot.empty) {
@@ -185,14 +87,14 @@ const searchUsers = async () => {
         buttonDisabled = true;
       }
 
-      // Create card HTML
+      // Create card HTML (Fixed)
       const cardHTML = `
         <div class="search-item">
           <div>
-            <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" alt="User Image">
-            <span class="username">${userData.displayName}</span>
+            <img src="${userData.photoURL !== 'No photo' ? userData.photoURL : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" id="imgF-${userData.uid}" alt="User Image">
+            <span class="username" id="nameF-${userData.uid}">${userData.displayName}</span>
           </div>
-          <button class="${buttonClass}" ${buttonDisabled ? "disabled" : ""} onclick="${buttonText === 'Remove Friend' ? `openRemoveFriendModal('${userId}')` : `sendFriendRequest('${userId}')`}">
+          <button class="${buttonClass}" id="btn-${userId}" ${buttonDisabled ? "disabled" : ""}>
             ${buttonText}
           </button>
         </div>
@@ -200,6 +102,29 @@ const searchUsers = async () => {
 
       // Append card to the card deck
       cardDeck.innerHTML += cardHTML;
+
+      // Add event listener to open profile
+      setTimeout(() => {
+        document.getElementById(`imgF-${userData.uid}`).addEventListener("click", () => {
+          localStorage.removeItem("friendId"); 
+          localStorage.setItem("friendId", userData.uid);
+            window.location.href = '../Open Profile/OpenProfile.html';
+        });
+        document.getElementById(`nameF-${userData.uid}`).addEventListener("click", () => {
+          localStorage.removeItem("friendId"); 
+          localStorage.setItem("friendId", userData.uid);
+            window.location.href = '../Open Profile/OpenProfile.html';
+        });
+    }, 0);
+
+      // Add event listener for friend request button
+      document.getElementById(`btn-${userId}`).addEventListener("click", () => {
+        if (buttonText === "Remove Friend") {
+          openRemoveFriendModal(userId);
+        } else {
+          sendFriendRequest(userId);
+        }
+      });
     });
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -247,62 +172,83 @@ document.querySelector("#cancel").addEventListener("click", function () {
     return {
     displayName: usersCache[uid].displayName || "Unknown User",
     userProfileImage: usersCache[uid].photoURL || "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg",
+    Id: usersCache[uid].uid || "Unknown ID",
   };
 };
 
 
 
 
-// Function to get all posts
-const getAllPosts = async () => {
+// Function to get all posts in real-time
+const getAllPosts = () => {
   try {
-    // Order posts by 'createdAt' field in descending order (newest first)
-    const q = query(collection(db, "posts"),orderBy("createdAt", "desc"))
-    const postsSnapshot = await getDocs(q);
-    const allPostDiv = document.getElementById("post-deck");
+    // Query posts ordered by 'createdAt' field in descending order
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    
+    // Listen for real-time updates
+    onSnapshot(q, (snapshot) => {
+      const allPostDiv = document.getElementById("post-deck");
+      allPostDiv.innerHTML = ""; // Clear existing posts
+      
+      snapshot.docs.forEach((postDoc) => {
+        const postData = postDoc.data();
 
-    // Clear existing posts
-    allPostDiv.innerHTML = "";
+        // Convert Firestore Timestamp to JS Date
+        let createdAt = "Unknown date";
+        if (postData.createdAt?.toDate) {
+          createdAt = postData.createdAt.toDate().toLocaleString(); // Include date and time
+        }
 
-    for (const postDoc of postsSnapshot.docs) {
-      const postData = postDoc.data();
+        // **Get user data from cache**
+        const userData = getUserDataFromObj(postData.uid);
+        const displayName = userData.displayName;
+        const opnID = userData.Id;
+        const userProfileImage = userData.userProfileImage;
 
-      // Convert Firestore Timestamp to JS Date
-      let createdAt = "Unknown date";
-      if (postData.createdAt?.toDate) {
-        createdAt = postData.createdAt.toDate().toLocaleString(); // Include date and time
-      }
+        // Create a new post card element
+        const postCard = document.createElement("div");
+        postCard.className = "d-flex justify-content-center my-3";
 
-      // **Get user data from cache**
-      const userData = getUserDataFromObj(postData.uid);
-      const displayName = userData.displayName;
-      const userProfileImage = userData.userProfileImage;
-
-      // Create a new post card element
-      const postCard = document.createElement("div");
-      postCard.className = "d-flex justify-content-center my-3";
-
-      postCard.innerHTML = `
-        <div class="card shadow-sm" style="width: 800px;"> 
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-2">
-            <img src="${userProfileImage ? userProfileImage : 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" 
-             alt="User Image" class="rounded-circle" style="width: 40px; height: 40px; margin-right:10px">
-              <h5 class="card-title mb-0">${displayName}</h5>
+        postCard.innerHTML = `
+          <div class="card shadow-sm" style="width: 800px;"> 
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <img src="${userProfileImage || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" id="imgFO-${opnID}" 
+                  alt="User Image" class="rounded-circle" style="width: 40px; height: 40px; margin-right:10px">
+                <h5 class="card-title mb-0" id="nameFO-${opnID}">${displayName}</h5>
+              </div>
+              <p class="card-text">${postData.text || 'No description available.'}</p>
+              <p class="text-muted" style="font-size: 12px;">Posted on: ${createdAt}</p>
             </div>
-            <p class="card-text">${postData.text || 'No description available.'}</p>
-            <p class="text-muted" style="font-size: 12px;">Posted on: ${createdAt}</p>
           </div>
-        </div>
-      `;
+        `;
 
-      // Append the post card to the post deck
-      allPostDiv.appendChild(postCard);
-    }
+        // Append the post card to the post deck
+        allPostDiv.appendChild(postCard);
+
+        // Add event listeners for opening profiles
+        setTimeout(() => {
+          document.getElementById(`imgFO-${opnID}`).addEventListener("click", () => {
+            localStorage.removeItem("friendId"); 
+            localStorage.setItem("friendId", opnID);
+              window.location.href = '../Open Profile/OpenProfile.html';
+          });
+          document.getElementById(`nameFO-${opnID}`).addEventListener("click", () => {
+            localStorage.removeItem("friendId"); 
+            localStorage.setItem("friendId", opnID);
+              window.location.href = '../Open Profile/OpenProfile.html';
+          });
+      }, 0);
+
+  
+      });
+    });
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 };
+
+
 
 // Fetch all users and then load posts
 fetchAllUsers().then(() => {

@@ -67,13 +67,16 @@ onSnapshot(q, async (snapshot) => {
             const requestItem = document.createElement('div');
             requestItem.className = 'friend-request-item';
             requestItem.innerHTML = `
-                <div>
+                <div class="picnname" >
                     <img src="${senderData.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" 
                         alt="${senderData.displayName}" id="imgF-${senderId}"
                         style="width: 40px; height: 40px; border-radius: 50%;">
-                    <span id="nameF-${senderId}">${senderData.displayName}</span>
+                    <span id="nameF-${senderId} class="nameOfP" ">${senderData.displayName}</span>
                 </div>
-                <div>
+                <div class="msg-text-req" >
+                    <span class="friend-request-text">wants to be your friend</span>
+                </div>
+                <div class="msg-text-req-btns" >
                     <button class="accept-btn" onclick="acceptFriendRequest('${doc.id}', '${senderId}')">Accept</button>
                     <button class="reject-btn" onclick="rejectFriendRequest('${doc.id}')">X</button>
                 </div>

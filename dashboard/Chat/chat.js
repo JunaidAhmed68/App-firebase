@@ -198,6 +198,7 @@ function openChat(conversationId, friendName, friendId, friendPhoto) {
   `;
   setTimeout(() => {
     document.getElementById(`imgF-${friendId}`).addEventListener("click", () => {
+        localStorage.removeItem("friendId");
         localStorage.setItem("friendId", friendId);
         window.location.href='../Open Profile/OpenProfile.html';
     });
