@@ -22,7 +22,7 @@ async function checkFriendStatus() {
         return;
        }
       
-
+// oo
       //  const q = query(collection(db, "friendRequests"), where("receiverId", "==", uid), where("status", "==", "pending"),where ("senderId", "==", uid_f));
       //  const requestSnapshoT = await getDocs(q);
        
@@ -394,5 +394,4 @@ infoProfile()
 
 
 
-
-
+
