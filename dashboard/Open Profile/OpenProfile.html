@@ -45,10 +45,10 @@
           </div>
         </div>
       </div>
+      <p id="send-req-text" style="display:none;" >wants to be your friend</p>
       <p id="remove-frnd-btn"styl="display:none;" >Remove friend</p>
       <p id="send-req-btn" style="display:none;" >Send friend request</p>
       <p id="send-req-btn-pending" style="display:none;" >Friend request pending</p>
-      <p id="send-req-text" style="display:none;" >wants to be your friend</p>
       <div id="accept-remove-req-btns" style="display:none;" >
         <p id="accept-req-btn"  >Accept</p>
         <p id="remove-req-btn"  >Reject</p>
@@ -62,6 +62,18 @@
 
     
 
+      <!-- remove friend Confirmation Modal -->
+      <div id="removeFriendModal" class="modal" style="display: none;">
+        <div class="modal-content cen-div">
+          <span class="close-btn" id="closeRemoveFriendModal" style="color:red; ">&times;</span>
+          <h2>Remove friend</h2>
+          <p id="removeFriendCnfmText">Are you sure you want to remove this friend?</p>
+          <div class="modal-buttons">
+            <button id="cancelRemoveFriendBtn" class="btn btn-secondary" >Cancel</button>
+            <button id="confirmRemoveFriendBtn" class="btn btn-danger">Remove</button>
+          </div>
+        </div>
+      </div>
       <!-- remove friend Confirmation Modal -->
       <div id="removeFriendModal" class="modal" style="display: none;">
         <div class="modal-content cen-div">

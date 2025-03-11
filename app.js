@@ -156,7 +156,7 @@ export function showMessage(message) {
 
 
 // -------------------------------------- error handlor -----------------------------------------
-const handleAuthErrors = (error) => {
+export const handleAuthErrors = (error) => {
   console.error("Auth Error:", error); // Log error for debugging
 
   let message = "Something went wrong. Please try again.";

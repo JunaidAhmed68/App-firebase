@@ -814,3 +814,17 @@ textarea {
   font-size: 22px;
   cursor: pointer;
 }
+.modal-header-delete{
+  display: flex;
+  justify-content: space-between;
+}
+.cls_bt{
+  color: red;
+
+}
+.cls_bt:hover{
+  color: #950101;
+}
+.cls_bt:active{
+  color: #170101;
+}

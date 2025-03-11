@@ -41,10 +41,93 @@ function showMessage(message) {
 }
 
 
+// -------------------------------------- error handlor -----------------------------------------
+ const handleAuthErrors = (error) => {
+  console.error("Auth Error:", error); // Log error for debugging
 
+  let message = "Something went wrong. Please try again.";
+
+  switch (error.code) {
+    case "auth/invalid-credential":
+      message = "Invalid email or password. Please try again.";
+      break;
+    case "auth/user-disabled":
+      message = "This account has been disabled. Contact support.";
+      break;
+    case "auth/user-not-found":
+      message = "No account found with this email.";
+      break;
+    case "auth/wrong-password":
+      message = "Incorrect password. Please try again.";
+      break;
+    case "auth/too-many-requests":
+      message = "Too many failed attempts. Try again later.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/email-already-in-use":
+      message = "This email is already registered. Try logging in.";
+      break;
+    case "auth/invalid-email":
+      message = "Invalid email format. Please enter a valid email.";
+      break;
+    case "auth/weak-password":
+      message = "Password should be at least 6 characters.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/popup-closed-by-user":
+      message = "Google sign-in popup closed. Try again.";
+      break;
+    case "auth/cancelled-popup-request":
+      message = "Multiple popups detected. Close extra popups and try again.";
+      break;
+    case "auth/account-exists-with-different-credential":
+      message = "An account already exists with this email using a different sign-in method.";
+      break;
+    case "auth/credential-already-in-use":
+      message = "This Google account is already linked to another account.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break;
+    case "auth/invalid-email":
+      message = "Invalid email format. Please enter a valid email.";
+      break;
+    case "auth/user-not-found":
+      message = "No account found with this email. Please check and try again.";
+      break;
+    case "auth/too-many-requests":
+      message = "Too many requests! Please try again later.";
+      break;
+    case "auth/network-request-failed":
+      message = "Network error. Please check your internet connection.";
+      break;
+    case "auth/internal-error":
+      message = "An unexpected error occurred. Please try again later.";
+      break
+    default:
+      message = error.message || "An unknown error occurred. Please try again.";
+      break;
+  }
+
+  showMessage(message);
+};
 
 
 export {
+  handleAuthErrors,
   createUserWithEmailAndPassword,
   deleteUser ,
   signInWithEmailAndPassword,

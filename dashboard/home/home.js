@@ -20,6 +20,103 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
 
 
 
+// ---------------------- remove friend -----------------------------------------
+window.removeFriend = async function (friendId) {
+  const currentUserUID = localStorage.getItem("uid");
+  closeRemoveFriendModal(); // Close the modal after deletion
+  if (!currentUserUID) return;
+  
+  try {
+    const userRef = doc(db, "users", currentUserUID);
+    const friendRef = doc(db, "users", friendId);
+ 
+    await updateDoc(userRef, {
+      friends: arrayRemove(friendId)
+    });
+ 
+    await updateDoc(friendRef, {
+      friends: arrayRemove(currentUserUID)
+    });
+ 
+    showMessage("Friend removed successfully.");
+    searchUsers(); // Refresh the search results
+  } catch (error) {
+    console.error("Error removing friend:", error);
+  }
+ }
+ let currentRemoveId_del=''; // Variable to store the current post ID
+ // Function to open the delete confirmation modal
+ window.openRemoveFriendModal = (receiverId) => {
+ currentRemoveId_del = receiverId; // Store the
+ document.getElementById("removeFriendModal").style.display = "block"; // Show the modal
+ document.querySelector("#closeRemoveFriendModal").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
+ document.querySelector("#cancelRemoveFriendBtn").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
+ };
+  
+ // Function to close the delete confirmation modal
+ const closeRemoveFriendModal = () => {
+     document.querySelector("#removeFriendModal").style.display = "none"; // Hide the modal
+   };
+     
+ // Event listener for the delete button
+ document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
+   await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
+ });
+
+
+
+
+// Function to send a friend request
+window.sendFriendRequest = async function(receiverId) {
+  const senderId = localStorage.getItem('uid'); // Get the current user's ID
+
+  if (!senderId) {
+      alert("You need to be logged in to send friend requests.");
+      return;
+  }
+
+  try {
+      // Create a unique ID for the friend request
+      const requestId = `${senderId}_${receiverId}_${Date.now()}`; // Unique ID based sender, receiver, and timestamp
+
+      // Add a new friend request document
+        // Set the friend request document
+        await setDoc(doc(db, "friendRequests", requestId), {
+          senderId: senderId,
+          receiverId: receiverId,
+          status: 'pending', // Status can be 'pending', 'accepted', or 'rejected'
+          createdAt: new Date() // Timestamp for when the request was sent
+      });
+
+      showMessage("Friend request sent successfully!");
+    } catch (error) {
+      console.error("Error sending friend request: ", error);
+      showMessage("Error sending friend request. Please try again.");
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Function to fetch filtered users
 const searchUsers = async () => {
   try {

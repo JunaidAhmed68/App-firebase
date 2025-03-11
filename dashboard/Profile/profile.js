@@ -6,7 +6,7 @@ if (!uid) {
 
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,EmailAuthProvider
+import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,EmailAuthProvider,handleAuthErrors
 } from "../../firebaseConfig.js";
 
 document.querySelector("#logout-btn").addEventListener("click", async () => {
@@ -544,7 +544,6 @@ async function deleteAccount() {
   const errorMessage = document.getElementById("error-message");
 
   if (!password) {
-      errorMessage.innerText = "Password is required!";
       errorMessage.style.display = "block";
       return;
   }
@@ -576,20 +575,17 @@ async function deleteAccount() {
 
       // Hide modal and show success message
       document.getElementById("confirmModal").style.display = "none";
-      alert("Your account has been deleted successfully.");
+      showMessage("Your account has been deleted successfully.");
 
       // Redirect to home page
       window.location.replace("../../index.html");
   } catch (error) {
       console.error("Error deleting user:", error);
-      errorMessage.innerText = error.message.includes("wrong-password")
-          ? "Incorrect password. Try again."
-          : "An error occurred. Please try again.";
-      errorMessage.style.display = "block";
-  }
+      handleAuthErrors(error);
+      }
 }
 
-document.querySelector(".delete").addEventListener("click", deleteAccount);
+document.querySelector(".deleteB").addEventListener("click", deleteAccount);
 
 
 

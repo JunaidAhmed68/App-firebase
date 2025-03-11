@@ -170,14 +170,17 @@
  <!-- Delete Account Modal -->
 <div id="confirmModal" class="modal">
   <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Delete Account</h2>
+      
+      <div class="modal-header-delete">
+        <h2>Delete Account</h2>
+        <span class="close cls_bt" style="color: red; " >X</span>
+      </div>
       <p>Are you sure you want to delete your account? This action cannot be undone.</p>
       <input type="password" id="confirmPassword" placeholder="Enter your password">
-      <p id="error-message" class="error-message"></p>
+      <p id="error-message" class="error-message" style="color: red; display:none;">Please enter your password!</p>
       <div class="modal-buttons">
           <button id="cancelBtn-acc">Cancel</button>
-          <button class="delete">Delete</button>
+          <button class="delete deleteB">Delete</button>
       </div>
   </div>
 </div>

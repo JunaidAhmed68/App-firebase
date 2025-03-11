@@ -19,21 +19,22 @@ async function checkFriendStatus() {
         document.getElementById("send-req-btn").style.display = "none";
         document.getElementById("remove-frnd-btn").style.display = "none";
         document.getElementById("send-req-btn-pending").style.display = "none";
+        document.getElementById("accept-remove-req-btns").style.display = "none";
         return;
        }
       
 
-      //  const q = query(collection(db, "friendRequests"), where("receiverId", "==", uid), where("status", "==", "pending"),where ("senderId", "==", uid_f));
-      //  const requestSnapshoT = await getDocs(q);
+       const q = query(collection(db, "friendRequests"), where("receiverId", "==", uid),where ("senderId", "==", uid_f), where("status", "==", "pending"));
+       const requestSnapshoT = await getDocs(q);
        
-      // if (!requestSnapshoT.empty) {
-      //   document.getElementById("send-req-btn").style.display = "none";
-      //   document.getElementById("remove-frnd-btn").style.display = "none";
-      //   document.getElementById("send-req-btn-pending").style.display = "none";
-      //   document.getElementById("send-req-text").style.display = "block";
-      //   document.getElementById("accept-remove-req-btns").style.display = "flex";
-      //   return;
-      // }
+      if (!requestSnapshoT.empty) {
+        document.getElementById("send-req-btn").style.display = "none";
+        document.getElementById("remove-frnd-btn").style.display = "none";
+        document.getElementById("send-req-btn-pending").style.display = "none";
+        document.getElementById("send-req-text").style.display = "block";
+        document.getElementById("accept-remove-req-btns").style.display = "flex";
+        return;
+      }
 
 
 
@@ -69,10 +70,12 @@ async function checkFriendStatus() {
           // Check if friendId exists in the friends array
           if (friendsArray.includes(uid_f)) {
             document.getElementById("accept-remove-req-btns").style.display = "none";
-            document.getElementById("accept-req-btn").style.display = "none";
             document.getElementById("send-req-btn").style.display = "none";
+            document.getElementById("send-req-text").style.display = "none";
             document.getElementById("remove-frnd-btn").style.display = "block";
           } else {
+            document.getElementById("accept-remove-req-btns").style.display = "none";
+            document.getElementById("send-req-text").style.display = "none";
             document.getElementById("send-req-btn").style.display = "block";
             document.getElementById("remove-frnd-btn").style.display = "none";
             
@@ -88,50 +91,85 @@ checkFriendStatus();
 
 
 // Accept Friend Request
-async function acceptFriendRequest(requestId, senderId) {
-    try {
-        const userRef = doc(db, "users", uid);
-        const senderRef = doc(db, "users", senderId);
-        const requestRef = doc(db, "friendRequests", requestId);
-        
-        const batch = writeBatch(db);
-        batch.update(userRef, { friends: arrayUnion(senderId) });
-        batch.update(senderRef, { friends: arrayUnion(uid) });
-        batch.delete(requestRef);
-        
-        await batch.commit();  
-        showMessage("Friend request accepted!");
-        checkFriendStatus(); // Refresh the friend status
-    } catch (error) {
-        console.error("Error accepting friend request:", error);
-        showMessage("Error accepting friend request.");
-    }
+async function acceptFriendRequest() {
+  try {
+      const requestQuery = query(
+          collection(db, "friendRequests"),
+          where("receiverId", "==", uid), // You are the receiver
+          where("senderId", "==", uid_f), // Friend is the sender
+          where("status", "==", "pending")
+      );
+
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (requestSnapshot.empty) {
+          showMessage("No pending request found.");
+          return;
+      }
+
+      const requestDoc = requestSnapshot.docs[0]; // Get the first matching request
+      const requestId = requestDoc.id; // Get the correct request ID
+
+      const userRef = doc(db, "users", uid);
+      const senderRef = doc(db, "users", uid_f);
+      const requestRef = doc(db, "friendRequests", requestId);
+
+      const batch = writeBatch(db);
+      batch.update(userRef, { friends: arrayUnion(uid_f) });
+      batch.update(senderRef, { friends: arrayUnion(uid) });
+      batch.delete(requestRef);
+
+      await batch.commit();
+      showMessage("Friend request accepted!");
+      checkFriendStatus(); // Refresh the UI
+      getFriendsCount(); // Update friend count
+  } catch (error) {
+      console.error("Error accepting friend request:", error);
+      showMessage("Error accepting friend request.");
+  }
 }
 
+
 // Reject Friend Request
-async function rejectFriendRequest(requestId) {
-    try {
-        await deleteDoc(doc(db, "friendRequests", requestId));
-        showMessage("Friend request rejected.");
-        checkFriendStatus(); // Refresh the friend status
-    } catch (error) {
-        console.error("Error rejecting friend request:", error);
-        showMessage("Error rejecting friend request.");
-    }
+async function rejectFriendRequest() {
+  try {
+      const requestQuery = query(
+          collection(db, "friendRequests"),
+          where("receiverId", "==", uid),
+          where("senderId", "==", uid_f),
+          where("status", "==", "pending")
+      );
+
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (requestSnapshot.empty) {
+          showMessage("No pending request found.");
+          return;
+      }
+
+      const requestDoc = requestSnapshot.docs[0]; // Get the first matching request
+      const requestId = requestDoc.id; // Get the correct request ID
+
+      await deleteDoc(doc(db, "friendRequests", requestId));
+
+      showMessage("Friend request rejected.");
+      checkFriendStatus(); // Refresh the UI
+  } catch (error) {
+      console.error("Error rejecting friend request:", error);
+      showMessage("Error rejecting friend request.");
+  }
 }
+
 
 
 document.getElementById("accept-req-btn").addEventListener("click", async () => {
-  const requestId = uid_f;
-  const senderId = uid;
-  await acceptFriendRequest(requestId, senderId);
-  checkFriendStatus(); // Refresh the friend status
+  await acceptFriendRequest();
 });
+
 document.getElementById("remove-req-btn").addEventListener("click", async () => {
-  const requestId = uid_f;
-  await rejectFriendRequest(requestId);
-  checkFriendStatus(); // Refresh the friend status
+  await rejectFriendRequest();
 });
+
 
 
 
@@ -167,8 +205,8 @@ window.sendFriendRequest = async function(receiverId) {
   };
 
 
-  // ---------------------- remove friend -----------------------------------------
-   window.removeFriend = async function (friendId) {
+  // ---------------------- reject friend -----------------------------------------
+window.removeFriend = async function (friendId) {
     const currentUserUID = localStorage.getItem("uid");
     closeRemoveFriendModal(); // Close the modal after deletion
     if (!currentUserUID) return;
@@ -210,12 +248,12 @@ const closeRemoveFriendModal = () => {
 document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
   await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
 });
-// document.getElementById("remove-frnd-btn").addEventListener("click", async () => {
-//   await openRemoveFriendModal(uid_f); // Call the delete function with the current task ID
-// });
-// document.getElementById("send-req-btn").addEventListener("click", async () => {
-//   await sendFriendRequest(uid_f); // Call the delete function with the current task ID
-// });
+document.getElementById("remove-frnd-btn").addEventListener("click", async () => {
+  await openRemoveFriendModal(uid_f); // Call the delete function with the current task ID
+});
+document.getElementById("send-req-btn").addEventListener("click", async () => {
+  await sendFriendRequest(uid_f); // Call the delete function with the current task ID
+});
 
 
 
