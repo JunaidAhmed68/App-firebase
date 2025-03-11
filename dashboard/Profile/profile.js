@@ -5,7 +5,7 @@ if (!uid) {
 }
 
 
-// ----------------------------------- logout -----------------------------------
+// ----------------------------------- Logout -----------------------------------
 import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,EmailAuthProvider,handleAuthErrors
 } from "../../firebaseConfig.js";
 
