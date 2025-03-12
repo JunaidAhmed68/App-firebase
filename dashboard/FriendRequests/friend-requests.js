@@ -71,7 +71,7 @@ onSnapshot(q, async (snapshot) => {
                     <img src="${senderData.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'}" 
                         alt="${senderData.displayName}" id="imgF-${senderId}"
                         style="width: 40px; height: 40px; border-radius: 50%;">
-                    <span id="nameF-${senderId} class="nameOfP" ">${senderData.displayName}</span>
+                    <span id="nameF-${senderId}" class="nameOfP">${senderData.displayName}</span>
                 </div>
                 <div class="msg-text-req" >
                     <span class="friend-request-text">wants to be your friend</span>
