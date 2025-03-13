@@ -6,7 +6,7 @@ if (!uid) {
 
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,EmailAuthProvider,handleAuthErrors
+import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,onSnapshot ,EmailAuthProvider,handleAuthErrors
 } from "../../firebaseConfig.js";
 
 document.querySelector("#logout-btn").addEventListener("click", async () => {
@@ -18,6 +18,83 @@ document.querySelector("#logout-btn").addEventListener("click", async () => {
     showMessage(error.message);
   }
 });
+
+function showFriendsModal() {
+  const userId = localStorage.getItem("uid"); // Get logged-in user's UID
+  const friendsList = document.getElementById("friendsList");
+  friendsList.innerHTML = `<p>Loading...</p>`; // Show loading text
+
+  // Reference to the user's document in Firestore
+  const userDocRef = doc(db, "users", userId);
+
+  // Fetch user's friends array
+  onSnapshot(userDocRef, (docSnap) => {
+      friendsList.innerHTML = ""; // Clear loading text
+
+      if (!docSnap.exists()) {
+          friendsList.innerHTML = `<p>User not found</p>`;
+          return;
+      }
+
+      const userData = docSnap.data();
+      const friendsArray = userData.friends || []; // Ensure it's an array
+
+      if (friendsArray.length === 0) {
+          friendsList.innerHTML = `<p>No friends found</p>`;
+          return;
+      }
+
+      // Loop through each friend ID in the friends array
+      friendsArray.forEach((friendId) => {
+          // Fetch friend's data
+          const friendDocRef = doc(db, "users", friendId);
+          getDoc(friendDocRef).then((friendSnap) => {
+              if (friendSnap.exists()) {
+                  const friendData = friendSnap.data();
+                  const friendName = friendData.displayName || "Unknown";
+                  const friendPhoto = friendData.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg';
+
+                  // Create friend list item
+                  const friendItem = document.createElement("li");
+                  friendItem.classList.add("list-group-item", "d-flex", "align-items-center", "justify-content-between");
+
+                  friendItem.innerHTML = `
+                      <div class="d-flex align-items-center">
+                          <img src="${friendPhoto}" alt="${friendName}" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                          <span>${friendName}</span>
+                      </div>
+                      <div>
+                          <button class="btn btn-primary btn-sm" onclick="startChat('${friendId}')">Chat</button>
+                          <button class="btn btn-danger btn-sm" onclick="removeFriend('${userId}', '${friendId}')">Remove</button>
+                      </div>
+                  `;
+                  friendsList.appendChild(friendItem);
+              }
+          }).catch((error) => {
+              console.error("Error fetching friend data: ", error);
+          });
+      });
+  }, (error) => {
+      console.error("Error fetching user data: ", error);
+      friendsList.innerHTML = `<p>Error loading friends</p>`;
+  });
+
+  // Show the modal
+  var modal = new bootstrap.Modal(document.getElementById('friendsModal'));
+  removeModalBackdrop();
+  modal.show();
+}
+function removeModalBackdrop() {
+  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = ''; // Restore scrolling
+}
+
+// Automatically remove the backdrop when the modal closes
+document.getElementById("friendsModal").addEventListener("hidden.bs.modal", removeModalBackdrop);
+
+
+document.querySelector("#profile-friends").addEventListener("click", showFriendsModal);
 
 // Store all user data in memory
  let usersCache = {};
@@ -586,9 +663,5 @@ async function deleteAccount() {
 }
 
 document.querySelector(".deleteB").addEventListener("click", deleteAccount);
-
-
-
-
 
 

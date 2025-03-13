@@ -21,6 +21,7 @@ let addUserData = async (user ,fullName ,phoneNumber ) => {
       displayName: fullName || user.displayName || 'No display name',  // User's display name
       photoURL: user.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg',      // User's profile photo URL (optional)
       phoneNumber: phoneNumber|| user.phoneNumber || 'No phone number', // User's phone number (optional)
+      accountType: "public",
       createdAt: new Date(),      // Timestamp when the user was created
     });
   } catch (e) {

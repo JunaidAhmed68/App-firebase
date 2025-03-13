@@ -60,6 +60,7 @@
         <span class="three-dots" id="three-dots-menu">&#8942;</span>
         <div class="dropdown-menu" id="dropdown-menu">
           <button class="delete" id="delete-profile-btn">Delete Profile</button>
+          <button class="chng-acc-type" id="delete-profile-btn">Account type</button>
         </div>
       </div>
     
@@ -84,7 +85,7 @@
           </div>
     
           <div class="text-center mx-2">
-            <h4 id="profile-friends" class="sp-the-btn">Friends<h5 id="total-frnds" class="sp-the-btn">0</h5></h4>
+            <h4 id="profile-friends" class="btn btn-success" >Friends<h5 id="total-frnds" class="sp-the-btn">0</h5></h4>
           </div>
         </div>
       </div>
@@ -118,7 +119,7 @@
     <!-- Posts Section -->
     <div class="post-sec" id="my-Allposts">
       <h4>Your Posts</h4>
-      <div id="posts-container" class="border" style="min-height: 200px; justify-self: center; ">
+      <div id="posts-container" class="border" style="min-height: 200px;">
         <!-- Posts will be rendered here -->
       </div>
     </div>
@@ -167,6 +168,26 @@
       </div>
   
 
+<!-- Show My Friends Modal -->
+<div class="modal fade" id="friendsModal" tabindex="-1" aria-labelledby="friendsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="friendsModalLabel">My Friends</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul id="friendsList" class="list-group">
+          <!-- Friends will be dynamically added here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+     
+     
  <!-- Delete Account Modal -->
 <div id="confirmModal" class="modal">
   <div class="modal-content">

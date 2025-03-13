@@ -329,19 +329,35 @@ fetchAllUsers().then(() => {
 });
 
 // Ensure that you have a reference to the post container
+const myPostDivMain = document.getElementById('my-Allposts'); // reference to the container
 const myPostDiv = document.getElementById('posts-container'); // reference to the container
 
 let getTheirPosts = async () => {
   try {
 
+
+
+   const accTypQ = query(collection(db, "users"), where("uid", "==", uid_f));
+   const accTypSnap = await getDocs(accTypQ);
+   let accTyp = "public";
+   
+   
     const q = query(collection(db, "posts"), where("uid", "==", uid_f),orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     
     document.getElementById('total-posts').textContent = querySnapshot.docs.length; // Update the total posts count
 
-    // Clear previous posts
     myPostDiv.innerHTML = ''; 
-
+    if (accTypSnap.docs[0].data().accountType == "private") {
+       myPostDivMain.innerHTML = `
+       <div class="alert alert-warning" role="alert">
+         This user's posts are private.
+       </div>
+       `;
+       return;
+     }
+    // Clear previous posts
+    
     querySnapshot.forEach((post) => {
       const postData = post.data();
       console.log(post.id, postData);
