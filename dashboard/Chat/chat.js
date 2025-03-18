@@ -9,15 +9,40 @@ if (!islogin) {
 import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential, limit,EmailAuthProvider  ,onAuthStateChanged,  increment, setDoc,onSnapshot, addDoc
 } from "../../firebaseConfig.js";
 
-document.querySelector("#logout-btn").addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    localStorage.removeItem("uid");
-    window.location.replace('../../index.html');
-  } catch (error) {
-    showMessage(error.message);
+// Show the confirmation modal when the logout button is clicked
+document.querySelector("#logout-btn").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "block";
+});
+
+// Close the modal when the close button is clicked
+document.getElementById("close-logout-modal").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
+// Close the modal when clicking outside of the modal
+window.addEventListener("click", (event) => {
+  const logoutModal = document.getElementById("logout-confirmation-modal");
+  if (event.target === logoutModal) {
+      logoutModal.style.display = "none";
   }
 });
+
+// Handle the confirmation of logout
+document.getElementById("confirm-logout-action").addEventListener("click", async () => {
+  try {
+      await signOut(auth);
+      localStorage.removeItem("uid");
+      window.location.replace('../../index.html');
+  } catch (error) {
+      showMessage(error.message);
+  }
+});
+
+// Handle the cancel action
+document.getElementById("cancel-logout-action").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
 
 
 // Global variables for chat and friend requests
@@ -25,9 +50,7 @@ let currentConversationId = null;
 let currentFriendId = null;
 
 // DOM elements
-const friendRequestsContainer = document.querySelector(
-  "#friendRequestsContainer"
-);
+const friendRequestsContainer = document.querySelector("#friendRequestsContainer");
 const conversationList = document.querySelector("#conversationList");
 const chatContainer = document.querySelector("#chatContainer");
 const chatFriendPhoto = document.querySelector("#chatFriendPhoto");
@@ -258,7 +281,27 @@ async function sendMessage() {
 
 // Load Friends & Default Chat UI on page load
 loadFriends();
-showDefaultChatScreen();
+var toChat= localStorage.getItem("ChatfriendId");
+if (toChat==islogin){
+    showMessage("You can't chat with yourself");
+    showDefaultChatScreen();
+    localStorage.removeItem("ChatfriendId");
+    localStorage.removeItem("ChatfriendName");
+    localStorage.removeItem("ChatfriendPhoto");
+}
+var toChat2 = localStorage.getItem("ChatfriendId");
+if(toChat2){
+  localStorage.removeItem("ChatfriendId");
+  const friendId = toChat2;
+  const friendName = localStorage.getItem("ChatfriendName");
+  const friendPhoto = localStorage.getItem("ChatfriendPhoto");
+  startConversation(friendId, friendName, friendPhoto);
+  localStorage.removeItem("ChatfriendId");
+  localStorage.removeItem("ChatfriendName");
+  localStorage.removeItem("ChatfriendPhoto");
+}else{
+    showDefaultChatScreen();
+}
 const hamburgerIcon = document.getElementById("hamburger-icon");
 const sidebar = document.getElementById("sidebar");
 const mainContent = document.querySelector(".main-content");

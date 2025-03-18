@@ -45,15 +45,13 @@ document.querySelector("#signup-btn").addEventListener("click", async (e) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Send verification email
-    await sendEmailVerification(user);
-    showMessage("Verification email sent! Please check your inbox.");
-
+    
     // Add user data to Firestore
     await addUserData(user, fullName, phoneNumber);
-    
-    // Optionally, you can redirect to a "check your email" page
-    window.location.replace('./check-email/check_email.html'); // Change to your desired path
+    localStorage.setItem("uid", user.uid);
+    window.location.replace('./dashboard/home/home.html');
+
+   
   } catch (error) {
     handleAuthErrors(error);
   }
@@ -72,11 +70,7 @@ document.querySelector("#login-btn").addEventListener("click", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Check if the user's email is verified
-    if (!user.emailVerified) {
-      showMessage("Please verify your email before logging in.");
-      return; // Stop execution if email is not verified
-    }
+    
 
     // Add user data to Firestore
     await addUserData(user);

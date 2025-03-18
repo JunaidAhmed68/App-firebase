@@ -1166,3 +1166,76 @@ img.profile-pic
     font-size: 13px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Styles for the modal content */
+#logout-confirmation-modal .modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+
+/* Styles for the close button */
+#logout-confirmation-modal .close-logout {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#logout-confirmation-modal .close-logout:hover,
+#logout-confirmation-modal .close-logout:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Styles for the buttons */
+#logout-confirmation-modal button {
+  margin: 10px 5px; /* Add some spacing between buttons */
+  padding: 10px 15px; /* Add padding for better appearance */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+#logout-confirmation-modal #confirm-logout-action {
+  background-color: #f44336; /* Red for Logout */
+  color: white; /* White text */
+}
+
+#logout-confirmation-modal #cancel-logout-action {
+  background-color: #4CAF50; /* Green for Cancel */
+  color: white; /* White text */
+}
+
+#logout-confirmation-modal button:hover {
+  opacity: 0.8; /* Slightly transparent on hover */
+}
+
+ @media (max-width: 768px) {
+  .modal-content {
+    width: 80%;
+  }
+}

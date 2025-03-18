@@ -7,11 +7,14 @@ if (!uid) {
 
 
 // ----------------------------------- imprts -----------------------------------
-import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, setDoc,arrayRemove ,writeBatch,arrayUnion
+import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, setDoc,arrayRemove ,writeBatch,arrayUnion,onSnapshot
 } from "../../firebaseConfig.js";
 
+
+
 // Function to check if friend exists in user's friend list
-async function checkFriendStatus() {
+async function checkFriendStatus(){
+
   if (!uid || !uid_f) return;
 
   try {
@@ -88,6 +91,12 @@ async function checkFriendStatus() {
 
 // Call the function on page load
 checkFriendStatus();
+
+
+
+
+
+
 
 
 // Accept Friend Request
@@ -174,6 +183,13 @@ document.getElementById("remove-req-btn").addEventListener("click", async () => 
 
 
 
+
+
+
+
+
+
+
 // Function to send a friend request
 window.sendFriendRequest = async function(receiverId) {
   const senderId = localStorage.getItem('uid'); // Get the current user's ID
@@ -205,7 +221,7 @@ window.sendFriendRequest = async function(receiverId) {
   };
 
 
-  // ---------------------- reject friend -----------------------------------------
+  // ---------------------- remove friend -----------------------------------------
 window.removeFriend = async function (friendId) {
     const currentUserUID = localStorage.getItem("uid");
     closeRemoveFriendModal(); // Close the modal after deletion
@@ -232,7 +248,7 @@ window.removeFriend = async function (friendId) {
   }
 let currentRemoveId_del=''; // Variable to store the current post ID
 // Function to open the delete confirmation modal
- window.openRemoveFriendModal = (receiverId) => {
+window.openRemoveFriendModal = (receiverId) => {
   currentRemoveId_del = receiverId; // Store the
   document.getElementById("removeFriendModal").style.display = "block"; // Show the modal
   document.querySelector("#closeRemoveFriendModal").addEventListener("click", closeRemoveFriendModal); // Close the modal if close button is clicked
@@ -254,6 +270,227 @@ document.getElementById("remove-frnd-btn").addEventListener("click", async () =>
 document.getElementById("send-req-btn").addEventListener("click", async () => {
   await sendFriendRequest(uid_f); // Call the delete function with the current task ID
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function showFriendsModal() {
+  const userId = localStorage.getItem("friendId"); // Get logged-in user's UID
+  const friendsList = document.getElementById("userList");
+  friendsList.innerHTML = `<p>Loading...</p>`; // Show loading text
+
+  // Reference to the user's document in Firestore
+  const userDocRef = doc(db, "users", userId);
+
+  // Fetch user's friends array
+  onSnapshot(userDocRef, (docSnap) => {
+    friendsList.innerHTML = ""; // Clear loading text
+
+    if (!docSnap.exists()) {
+      friendsList.innerHTML = `<p>User not found</p>`;
+      return;
+    }
+
+    const userData = docSnap.data();
+    const friendsArray = userData.friends || []; // Ensure it's an array
+
+    if (friendsArray.length === 0) {
+      friendsList.innerHTML = `<p>No friends found</p>`;
+      return;
+    }
+
+    friendsArray.forEach(async (friendId) => {
+      // Fetch friend's data
+      const friendDocRef = doc(db, "users", friendId);
+      try {
+        const friendSnap = await getDoc(friendDocRef);
+        if (friendSnap.exists()) {
+          const friendData = friendSnap.data();
+          const friendName = friendData.displayName || "Unknown";
+          const friendPhoto =
+            friendData.photoURL ||
+            "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+
+          // Create friend list item
+          const friendItem = document.createElement("li");
+          friendItem.classList.add("list-group-item", "d-flex", "align-items-center", "justify-content-between");
+
+          friendItem.innerHTML = `
+              <div class="friend-info">
+                  <img src="${friendPhoto}" alt="${friendName}'s profile picture" class="friend-avatar" id="id${friendId}">
+                  <span class="friend-name">${friendName}</span>
+              </div>
+              <div class="friend-actions">
+                  <button class="btn btn-chat">Chat</button>
+                  <button class="btn btn-add">Add</button>
+                  <button class="btn btn-pen">Pending</button>
+              </div>
+          `;
+          friendsList.appendChild(friendItem);
+
+          // Get logged-in user ID
+          const currentUserId = localStorage.getItem("uid");
+
+          // Check friendship status
+          checkisFriendOrMe(currentUserId, friendId, friendItem);
+          
+          // Event listeners for navigation
+          friendItem.querySelector(".friend-name").addEventListener("click", () => {
+            localStorage.setItem("friendId", friendId);
+            window.location.href = "../Open Profile/OpenProfile.html";
+          });
+
+          friendItem.querySelector(".friend-avatar").addEventListener("click", () => {
+            localStorage.setItem("friendId", friendId);
+            window.location.href = "../Open Profile/OpenProfile.html";
+          });
+
+          friendItem.querySelector(".btn-chat").addEventListener("click", () => {
+            localStorage.setItem("ChatfriendId", friendId);
+            localStorage.setItem("ChatfriendName", friendName);
+            localStorage.setItem("ChatfriendPhoto", friendPhoto);
+            window.location.href = "../Chat/chat.html";
+          });
+          friendItem.querySelector(".btn-add").addEventListener("click", () => {
+            sendFriendRequest(friendId);
+            friendItem.querySelector(".btn-add").style.display = "none";
+            checkisFriendOrMe(currentUserId, friendId, friendItem);
+
+
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching friend data: ", error);
+      }
+    });
+  }, (error) => {
+    console.error("Error fetching user data: ", error);
+    friendsList.innerHTML = `<p>Error loading friends</p>`;
+  });
+}
+
+// _____________________________ CHECK FRIEND STATUS FUNCTION _______________________________
+
+async function checkisFriendOrMe(currentUserId, friendId, friendItem) {
+  try {
+    const chatBtn = friendItem.querySelector(".btn-chat");
+    const addBtn = friendItem.querySelector(".btn-add");
+    const penBtn = friendItem.querySelector(".btn-pen");
+    
+    chatBtn.style.display = "none";
+    addBtn.style.display = "none";
+    penBtn.style.display = "none";
+    if (currentUserId === friendId) {
+      // If it's the same user, hide both buttons
+      chatBtn.style.display = "none";
+      addBtn.style.display = "none";
+      penBtn.style.display = "none";
+      
+      return;
+    }
+
+    // Fetch current user data
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      const friendsArray = userData.friends || [];
+
+      if (friendsArray.includes(friendId)) {
+        // Already friends -> Show Chat, Hide Add
+        chatBtn.style.display = "block";
+        addBtn.style.display = "none";
+        penBtn.style.display = "none";
+        return
+      } 
+      // Check if my friend request is pending
+      const requestQuery = query(
+        collection(db, "friendRequests"),
+        where("senderId", "==", uid),
+        where("receiverId", "==", friendId),
+        where("status", "==", "pending")
+      );
+      const requestSnapshot = await getDocs(requestQuery);
+
+      if (!requestSnapshot.empty) {
+        chatBtn.style.display = "none";
+        addBtn.style.display = "none";
+        penBtn.style.display = "block";
+        return
+
+      }
+      
+      
+      else {
+        // Not friends -> Hide Chat, Show Add
+        chatBtn.style.display = "none";
+        addBtn.style.display = "block";
+      }
+    }
+  } catch (error) {
+    console.error("Error checking friend status:", error);
+  }
+}
+
+
+function showUserModal() {
+  document.getElementById("userModal").style.display = "flex";
+  showFriendsModal();
+}
+
+function hideUserModal() {
+  document.getElementById("userModal").style.display = "none";
+}
+
+
+// Automatically remove the backdrop when the modal closes
+document.getElementById("closeShowFriendsM").addEventListener("click", hideUserModal);
+
+
+
+// document.querySelector("#profile-friends").addEventListener("click",
+//   showUserModal);
+  
+  document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
+    await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
+  });
+  document.getElementById("profile-friends").addEventListener("click", async () => {
+    const myFrndOrNot = await isMyFriend();
+    if(myFrndOrNot){
+       showUserModal(); // Call the delete function with the current task ID
+    }else{
+      showMessage("You are not friend with this user");
+    }
+  });
+// document.querySelector("#profile-friends").addEventListener({}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -328,47 +565,92 @@ fetchAllUsers().then(() => {
   infoProfile();
 });
 
+
+async function isMyFriend() {
+  try {
+
+          // Fetch current user data
+          const userRef = doc(db, "users", uid);
+          const userSnap = await getDoc(userRef);
+    
+          if (userSnap.exists()) {
+              const userData = userSnap.data();
+              const friendsArray = userData.friends || []; // Ensure it's an array
+              
+              const typeOfAcc = userData.accountType 
+              // Check if friendId exists in the friends array
+              if (friendsArray.includes(uid_f) || typeOfAcc === "public") {
+                return true;
+              }
+            }
+            return false;
+    
+  } catch (error) {
+    console.error("Error is my frnd fun:", error);
+
+  }
+}
+
+
+
 // Ensure that you have a reference to the post container
 const myPostDivMain = document.getElementById('my-Allposts'); // reference to the container
 const myPostDiv = document.getElementById('posts-container'); // reference to the container
 
 let getTheirPosts = async () => {
   try {
+    const accTypQ = query(collection(db, "users"), where("uid", "==", uid_f));
+    const accTypSnap = await getDocs(accTypQ);
 
+    if (accTypSnap.empty) {
+      console.error("User not found");
+      return;
+    }
 
+    const accountType = accTypSnap.docs[0].data().accountType || "public";
+    const isFriend = await isMyFriend(); // Check if the user is a friend
 
-   const accTypQ = query(collection(db, "users"), where("uid", "==", uid_f));
-   const accTypSnap = await getDocs(accTypQ);
-   let accTyp = "public";
-   
-   
-    const q = query(collection(db, "posts"), where("uid", "==", uid_f),orderBy("createdAt", "desc"));
+    if (accountType === "private" && !isFriend && uid_f !== uid) {
+      showPrivateAccountMessage();
+    } else {
+      showPublicPosts();
+    }
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+};
+
+// ✅ Function to show private account message
+function showPrivateAccountMessage() {
+  myPostDivMain.innerHTML = `
+    <div class="alert alert-warning" role="alert">
+      This user's posts are private.
+      <br>
+      You need to be friends with this user to see their posts and friends.
+    </div>
+  `;
+}
+
+// ✅ Function to fetch and display public posts
+async function showPublicPosts() {
+  try {
+    const q = query(collection(db, "posts"), where("uid", "==", uid_f), orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
-    
-    document.getElementById('total-posts').textContent = querySnapshot.docs.length; // Update the total posts count
 
-    myPostDiv.innerHTML = ''; 
-    if (accTypSnap.docs[0].data().accountType == "private") {
-       myPostDivMain.innerHTML = `
-       <div class="alert alert-warning" role="alert">
-         This user's posts are private.
-       </div>
-       `;
-       return;
-     }
-    // Clear previous posts
-    
+    document.getElementById('total-posts').textContent = querySnapshot.docs.length; // Update total posts count
+
+    myPostDiv.innerHTML = ''; // Clear previous posts
+
     querySnapshot.forEach((post) => {
       const postData = post.data();
       console.log(post.id, postData);
 
-      // Convert Firestore Timestamp to JS Date
       let createdAt = "Unknown date";
       if (postData.createdAt?.toDate) {
         createdAt = postData.createdAt.toDate().toLocaleString();
       }
 
-      // Create the card div
+      // Create post card
       const postCard = document.createElement('div');
       postCard.classList.add('card', 'shadow-sm');
       postCard.style.marginBottom = '5px';
@@ -379,13 +661,14 @@ let getTheirPosts = async () => {
           <p class="text-muted" style="font-size: 12px;">Posted on: ${createdAt}</p>
         </div>
       `;
-      // Append the post card to the container
+
       myPostDiv.appendChild(postCard);
     });
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    console.error("Error fetching public posts:", error);
   }
-};
+}
+
 
 
 // Call the function to load the posts for the current user

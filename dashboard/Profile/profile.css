@@ -561,7 +561,7 @@ h4, h5 {
     margin-top:0px;
   }
 }
-
+btn-chat
 
 
 
@@ -583,103 +583,6 @@ h4, h5 {
   z-index: 1000;
 }
 
-/* Modal Styling */
-.modal {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  max-width: 90%;
-  height: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
-  text-align: center;
-}
-
-/* Profile Picture */
-.profile-picture {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto 15px;
-}
-
-.file-input {
-  display: block;
-  margin: 10px auto;
-}
-
-/* Input Fields */
-input[type="text"],
-textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  resize: none;
-}
-
-/* Buttons */
-.btn-primary,
-.btn-close {
-  display: inline-block;
-  width: 45%;
-  padding: 15px 10px;
-  margin: 10px 5px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.btn-primary {
-  background-color: #005bb5;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #003366;
-}
-
-.btn-close {
-  background-color: #d9534f;
-  color: white;
-
-}
-
-.btn-close:hover {
-  background-color: #c9302c;
-}
-#EditProfileModalButtons{
-  display: flex;
-  width: 100%;
-}
-/* Responsive Design */
-@media (max-width: 480px) {
-  .modal {
-    width: 90%;
-    padding: 15px;
-  }
-
-  .profile-picture {
-    width: 80px;
-    height: 80px;
-  }
-
-  .btn-primary,
-  .btn-close {
-    width: 100%;
-  }
-}
 
 
 
@@ -827,4 +730,470 @@ textarea {
 }
 .cls_bt:active{
   color: #170101;
+}
+
+
+
+
+
+
+
+
+
+
+/* Modal Container */
+.popup-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: flex-start; /* Aligning it from the top */
+  padding-top: 100px; /* Moving the modal down */
+}
+
+/* Modal Content */
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Header */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Close Button */
+.popup-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.popup-close:hover {
+  color: darkred;
+}
+
+/* Body */
+.popup-body {
+  margin-top: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Friends List */
+.user-list {
+  padding: 0;
+  list-style: none;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+/* Friends List Styling */
+#userList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease-in-out;
+}
+
+.friend-item:hover {
+  background: #e9ecef;
+}
+
+/* Friend Information */
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.friend-avatar {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.friend-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Action Buttons */
+.friend-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.friend-actions .btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: none;
+}
+
+.btn-chat {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-chat:hover {
+  background-color: #0056b3;
+}
+
+.btn-remove {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-remove:hover {
+  background-color: #c82333;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Modal Background */
+#removeFriendModal {
+  display: none; /* Initially hidden */
+  position: fixed;
+  z-index: 1000; /* Ensure it appears on top */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+/* Close Button */
+.close-btn {
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Centering Close Button */
+.close-btn:hover {
+  color: darkred;
+}
+
+/* Modal Heading */
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #333;
+}
+
+/* Modal Text */
+#removeFriendCnfmText {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-buttons .btn {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.btn-secondary {
+  background: #ccc;
+  color: #333;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #bbb;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .modal-content {
+      width: 95%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Styles for the modal content */
+#account-type-modal .modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* Styles for the close button */
+#account-type-modal .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#account-type-modal .close:hover,
+#account-type-modal .close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Styles for the buttons */
+#account-type-modal button {
+  margin: 10px 5px; /* Add some spacing between buttons */
+  padding: 10px 15px; /* Add padding for better appearance */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+#account-type-modal #set-private-btn {
+  background-color: #f44336; /* Red for Private */
+  color: white; /* White text */
+}
+
+#account-type-modal #set-public-btn {
+  background-color: #4CAF50; /* Green for Public */
+  color: white; /* White text */
+}
+
+#account-type-modal button:hover {
+  opacity: 0.8; /* Slightly transparent on hover */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 90%;
+  height: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  text-align: center;
+}
+
+/* Profile Picture */
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 15px;
+}
+
+.file-input {
+  display: block;
+  margin: 10px auto;
+}
+
+/* Input Fields */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: none;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-close {
+  display: inline-block;
+  width: 45%;
+  padding: 15px 10px;
+  margin: 10px 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background-color: #005bb5;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #003366;
+}
+
+.btn-close {
+  background-color: #d9534f;
+  color: white;
+
+}
+
+.btn-close:hover {
+  background-color: #c9302c;
+}
+#EditProfileModalButtons{
+  display: flex;
+  width: 100%;
+}
+/* Responsive Design */
+@media (max-width: 480px) {
+  .modal {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+  }
+
+  .btn-primary,
+  .btn-close {
+    width: 100%;
+  }
 }

@@ -6,22 +6,47 @@ if (!uid) {
 
 
 // ----------------------------------- logout -----------------------------------
-import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,onSnapshot ,EmailAuthProvider,handleAuthErrors
+import { auth, signOut , db , collection ,orderBy, getDocs , query,where ,deleteDoc ,doc ,updateDoc,getDoc,  serverTimestamp,showMessage, deleteUser ,getAuth,reauthenticateWithCredential,onSnapshot ,EmailAuthProvider,handleAuthErrors,arrayRemove
 } from "../../firebaseConfig.js";
 
-document.querySelector("#logout-btn").addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    localStorage.removeItem("uid");
-    window.location.replace('../../index.html');
-  } catch (error) {
-    showMessage(error.message);
+// Show the confirmation modal when the logout button is clicked
+document.querySelector("#logout-btn").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "block";
+});
+
+// Close the modal when the close button is clicked
+document.getElementById("close-logout-modal").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
+// Close the modal when clicking outside of the modal
+window.addEventListener("click", (event) => {
+  const logoutModal = document.getElementById("logout-confirmation-modal");
+  if (event.target === logoutModal) {
+      logoutModal.style.display = "none";
   }
 });
 
+// Handle the confirmation of logout
+document.getElementById("confirm-logout-action").addEventListener("click", async () => {
+  try {
+      await signOut(auth);
+      localStorage.removeItem("uid");
+      window.location.replace('../../index.html');
+  } catch (error) {
+      showMessage(error.message);
+  }
+});
+
+// Handle the cancel action
+document.getElementById("cancel-logout-action").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
+
 function showFriendsModal() {
   const userId = localStorage.getItem("uid"); // Get logged-in user's UID
-  const friendsList = document.getElementById("friendsList");
+  const friendsList = document.getElementById("userList");
   friendsList.innerHTML = `<p>Loading...</p>`; // Show loading text
 
   // Reference to the user's document in Firestore
@@ -49,52 +74,119 @@ function showFriendsModal() {
           // Fetch friend's data
           const friendDocRef = doc(db, "users", friendId);
           getDoc(friendDocRef).then((friendSnap) => {
-              if (friendSnap.exists()) {
-                  const friendData = friendSnap.data();
-                  const friendName = friendData.displayName || "Unknown";
-                  const friendPhoto = friendData.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg';
-
+            if (friendSnap.exists()) {
+              const friendData = friendSnap.data();
+              var friendName = friendData.displayName || "Unknown";
+              var friendPhoto = friendData.photoURL || 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg';
+              
                   // Create friend list item
                   const friendItem = document.createElement("li");
                   friendItem.classList.add("list-group-item", "d-flex", "align-items-center", "justify-content-between");
 
-                  friendItem.innerHTML = `
-                      <div class="d-flex align-items-center">
-                          <img src="${friendPhoto}" alt="${friendName}" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                          <span>${friendName}</span>
-                      </div>
-                      <div>
-                          <button class="btn btn-primary btn-sm" onclick="startChat('${friendId}')">Chat</button>
-                          <button class="btn btn-danger btn-sm" onclick="removeFriend('${userId}', '${friendId}')">Remove</button>
-                      </div>
-                  `;
+                  friendItem.innerHTML =`
+                  <div class="friend-info">
+                      <img src="${friendPhoto}" alt="${friendName}'s profile pictur"  class="friend-avatar" id="id${friendId}" >
+                      <span class="friend-name">${friendName}</span>
+                  </div>
+                  <div class="friend-actions">
+                      <button class="btn btn-chat")">Chat</button>
+                      <button class="btn btn-remove" onclick="openRemoveFriendModal('${friendId}')">Remove</button>
+                  </div>
+              `;
                   friendsList.appendChild(friendItem);
               }
-          }).catch((error) => {
+
+              document.querySelector(".friend-name").addEventListener("click", () => {
+                  localStorage.removeItem("friendId");
+                  localStorage.setItem("friendId", friendId);
+                  window.location.href = '../Open Profile/OpenProfile.html';
+              });
+              document.querySelector(".friend-avatar").addEventListener("click", () => {
+                  localStorage.removeItem("friendId");
+                  localStorage.setItem("friendId", friendId);
+                  window.location.href = '../Open Profile/OpenProfile.html';
+              
+              });
+              document.querySelector(".btn-chat").addEventListener("click", () => {
+                  localStorage.removeItem("ChatfriendId");
+                  localStorage.setItem("ChatfriendId", friendId);
+                  localStorage.removeItem("ChatfriendName");
+                  localStorage.setItem("ChatfriendName", friendName);
+                  localStorage.removeItem("ChatfriendPhoto");
+                  localStorage.setItem("ChatfriendPhoto", friendPhoto);
+                  window.location.href = '../Chat/chat.html';
+              }
+              );
+
+            
+            }).catch((error) => {
               console.error("Error fetching friend data: ", error);
+            });
           });
-      });
   }, (error) => {
-      console.error("Error fetching user data: ", error);
+    console.error("Error fetching user data: ", error);
       friendsList.innerHTML = `<p>Error loading friends</p>`;
   });
+}
 
-  // Show the modal
-  var modal = new bootstrap.Modal(document.getElementById('friendsModal'));
-  removeModalBackdrop();
-  modal.show();
+function showUserModal() {
+  document.getElementById("userModal").style.display = "flex";
+  showFriendsModal();
 }
-function removeModalBackdrop() {
-  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = ''; // Restore scrolling
+
+function hideUserModal() {
+  document.getElementById("userModal").style.display = "none";
 }
+
+  // ---------------------- remove friend -----------------------------------------
+window.removeFriend = async function (friendId) {
+    const currentUserUID = localStorage.getItem("uid");
+    closeRemoveFriendModal(); // Close the modal after deletion
+    if (!currentUserUID) return;
+    
+    try {
+      const userRef = doc(db, "users", currentUserUID);
+      const friendRef = doc(db, "users", friendId);
+  
+      await updateDoc(userRef, {
+        friends: arrayRemove(friendId)
+      });
+  
+      await updateDoc(friendRef, {
+        friends: arrayRemove(currentUserUID)
+      });
+  
+      showMessage("Friend removed successfully.");
+      getFriendsCount(); // Refresh the friends count
+    } catch (error) {
+      console.error("Error removing friend:", error);
+    }
+  }
+
+  let currentRemoveId_del=''; // Variable to store the current post ID
+// Function to open the delete confirmation modal
+window.openRemoveFriendModal = (receiverId) => {
+  currentRemoveId_del = receiverId; // Store the
+  document.getElementById("removeFriendModal").style.display = "block"; // Show the modal
+  document.querySelector("#closeRemoveFriendModal").addEventListener("click",closeRemoveFriendModal); // Close the modal if close button is clicked
+  document.querySelector("#cancelRemoveFriendBtn").addEventListener("click",closeRemoveFriendModal); // Close the modal if close button is clicked
+};
+// Function to close the delete confirmation modal
+const closeRemoveFriendModal = () => {
+  document.querySelector("#removeFriendModal").style.display = "none"; // Hide the modal
+};
+  
+// Event listener for the delete button
+document.getElementById("confirmRemoveFriendBtn").addEventListener("click", async () => {
+await removeFriend(currentRemoveId_del); // Call the delete function with the current task ID
+});
+
 
 // Automatically remove the backdrop when the modal closes
-document.getElementById("friendsModal").addEventListener("hidden.bs.modal", removeModalBackdrop);
+document.getElementById("closeShowFriendsM").addEventListener("click", hideUserModal);
 
 
-document.querySelector("#profile-friends").addEventListener("click", showFriendsModal);
+document.querySelector("#profile-friends").addEventListener("click", showUserModal);
 
 // Store all user data in memory
  let usersCache = {};
@@ -665,3 +757,57 @@ async function deleteAccount() {
 document.querySelector(".deleteB").addEventListener("click", deleteAccount);
 
 
+// Assuming you have the user's UID stored in localStorage
+// const uid = localStorage.getItem('uid');
+
+// Function to fetch and display the current account type
+async function fetchAccountType() {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const accountType = userData.accountType || "private"; // Default to private if not set
+        document.getElementById("current-account-type").textContent = accountType;
+    }
+}
+
+// Show the modal when the "Account type" button is clicked
+document.querySelector(".change-account-type-btn").addEventListener("click", () => {
+    document.getElementById("account-type-modal").style.display = "block";
+});
+
+// Close the modal when the close button is clicked
+document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("account-type-modal").style.display = "none";
+});
+
+// Close the modal when clicking outside of the modal
+window.addEventListener("click", (event) => {
+    const modal = document.getElementById("account-type-modal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+// Function to update account type in Firestore
+async function updateAccountType(newType) {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, {
+        accountType: newType
+    });
+    document.getElementById("current-account-type").textContent = newType; // Update displayed account type
+    document.getElementById("account-type-modal").style.display = "none"; // Hide modal after selection
+}
+
+// Event listeners for setting account type
+document.getElementById("set-private-btn").addEventListener("click", async () => {
+    await updateAccountType("private");
+});
+
+document.getElementById("set-public-btn").addEventListener("click", async () => {
+    await updateAccountType("public");
+});
+
+// Call the function to fetch the current account type on page load
+fetchAccountType();

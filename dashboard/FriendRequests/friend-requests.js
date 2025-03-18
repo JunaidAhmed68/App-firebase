@@ -8,16 +8,41 @@ if (!uid) {
 import { auth, signOut, db, collection, onSnapshot, query, where, doc, arrayUnion, writeBatch, deleteDoc, showMessage , getDocs} from "../../firebaseConfig.js";
 
 // Logout Functionality
-document.querySelector("#logout-btn").addEventListener("click", async () => {
-    try {
-        await signOut(auth);
-        localStorage.removeItem("uid");
-        showMessage("Logged out successfully!");
-        setTimeout(() => window.location.replace('../../index.html'), 3000);
-    } catch (error) {
-        alert(error.message);
-    }
+// Show the confirmation modal when the logout button is clicked
+document.querySelector("#logout-btn").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "block";
 });
+
+// Close the modal when the close button is clicked
+document.getElementById("close-logout-modal").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
+// Close the modal when clicking outside of the modal
+window.addEventListener("click", (event) => {
+  const logoutModal = document.getElementById("logout-confirmation-modal");
+  if (event.target === logoutModal) {
+      logoutModal.style.display = "none";
+  }
+});
+
+// Handle the confirmation of logout
+document.getElementById("confirm-logout-action").addEventListener("click", async () => {
+  try {
+      await signOut(auth);
+      localStorage.removeItem("uid");
+      window.location.replace('../../index.html');
+  } catch (error) {
+      showMessage(error.message);
+  }
+});
+
+// Handle the cancel action
+document.getElementById("cancel-logout-action").addEventListener("click", () => {
+  document.getElementById("logout-confirmation-modal").style.display = "none";
+});
+
+
 
 // Accept Friend Request
 async function acceptFriendRequest(requestId, senderId) {

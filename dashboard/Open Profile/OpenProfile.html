@@ -46,9 +46,9 @@
         </div>
       </div>
       <p id="send-req-text" style="display:none;" >wants to be your friend</p>
-      <p id="remove-frnd-btn"styl="display:none;" >Remove friend</p>
-      <p id="send-req-btn" style="display:none;" >Send friend request</p>
-      <p id="send-req-btn-pending" style="display:none;" >Friend request pending</p>
+      <p id="remove-frnd-btn"styl="display:none;" >Remove friend </p>
+      <p id="send-req-btn" style="display:none;" >Send friend request + </p>
+      <p id="send-req-btn-pending" style="display:none;" >Requested</p>
       <div id="accept-remove-req-btns" style="display:none;" >
         <p id="accept-req-btn"  >Accept</p>
         <p id="remove-req-btn"  >Reject</p>
@@ -57,6 +57,16 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+    
+  
 
 
 
@@ -74,18 +84,7 @@
           </div>
         </div>
       </div>
-      <!-- remove friend Confirmation Modal -->
-      <div id="removeFriendModal" class="modal" style="display: none;">
-        <div class="modal-content cen-div">
-          <span class="close-btn" id="closeRemoveFriendModal" style="color:red; ">&times;</span>
-          <h2>Remove friend</h2>
-          <p id="removeFriendCnfmText">Are you sure you want to remove this friend?</p>
-          <div class="modal-buttons">
-            <button id="cancelRemoveFriendBtn" class="btn btn-secondary" >Cancel</button>
-            <button id="confirmRemoveFriendBtn" class="btn btn-danger">Remove</button>
-          </div>
-        </div>
-      </div>
+
 
    <!-- Posts Section -->
    <div class="post-sec" id="my-Allposts">
@@ -94,7 +93,21 @@
       <!-- Posts will be rendered here -->
     </div>
   </div>
-
+    <!-- Show Their Friends Modal -->
+    <div id="userModal" class="popup-container">
+      <div class="popup-content">
+          <div class="popup-header">
+              <h3 class="popup-title">Friends</h3>
+              <button class="popup-close" id="closeShowFriendsM" style="color:red;" >X</button>
+          </div>
+          <div class="popup-body">
+              <ul id="userList" class="user-list">
+                  <p>Loading...</p>
+              </ul>
+          </div>
+      </div>
+    </div>
+    
     <!-- Message Box / Modal -->
     <div id="msg-modal" class="msg-modal">
       <span id="msg-text"></span>
